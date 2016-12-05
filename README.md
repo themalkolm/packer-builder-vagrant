@@ -3,7 +3,8 @@
 Builder proxy. It finds the corresponding vagrant box in the local vagrant cache and
 forwards the actual building the to corresponding builder.
 
-**WARNING** Currently works only with `virtualbox-ovf` due me being lazy.
+**WARNING** It essentially compiles **whole** packer code to allow us to configure any
+builder plugin.
 
 **WARNING** Currently works only with already downloaded vagrant boxes. It **won't** download missing ones.
 
