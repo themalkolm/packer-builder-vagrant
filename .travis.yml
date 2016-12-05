@@ -1,5 +1,7 @@
 sudo: false
 language: go
+env:
+  - PACKER_VERSION=0.12.0
 go:
   - 1.7
 install:
@@ -11,9 +13,9 @@ deploy:
   - provider: releases
     api_key: ${GITHUB_API_KEY}
     file:
-      - build/packer-builder-vagrant-darwin-amd64
-      - build/packer-builder-vagrant-linux-amd64
-      - build/packer-builder-vagrant-windows-amd64.exe
+      - build/packer-${PACKER_VERSION}-builder-vagrant-darwin-amd64
+      - build/packer-${PACKER_VERSION}-builder-vagrant-linux-amd64
+      - build/packer-${PACKER_VERSION}-builder-vagrant-windows-amd64.exe
     skip_cleanup: true
     overwrite: true
     on:
