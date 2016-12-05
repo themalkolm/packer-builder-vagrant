@@ -5,7 +5,7 @@ import (
 )
 
 type Builder struct {
-	config  *Config
+	config *Config
 }
 
 func NewBuilder() *Builder {

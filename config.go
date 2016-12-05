@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 
-	"github.com/mitchellh/packer/template/interpolate"
+	"github.com/mitchellh/packer/command"
 	"github.com/mitchellh/packer/helper/config"
 	"github.com/mitchellh/packer/packer"
-	"github.com/mitchellh/packer/command"
+	"github.com/mitchellh/packer/template/interpolate"
 )
 
 type Config struct {
@@ -28,8 +28,7 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 		Interpolate:        true,
 		InterpolateContext: &c.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
-			Exclude: []string{
-			},
+			Exclude: []string{},
 		},
 	}, raws...)
 	if err != nil {

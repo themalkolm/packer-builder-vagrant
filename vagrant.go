@@ -2,17 +2,16 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"os/user"
+	"regexp"
 	"sort"
 	"strings"
-	"os"
-	"io/ioutil"
-	"regexp"
-	"os/user"
+	"path/filepath"
 
 	"github.com/blang/semver"
-
 	"github.com/koding/vagrantutil"
-	"path/filepath"
 )
 
 const (
@@ -39,7 +38,7 @@ func newBoxSorter(boxes []*vagrantutil.Box) (*boxSorter, error) {
 		versions[i] = &v
 	}
 	return &boxSorter{
-		boxes: boxes,
+		boxes:    boxes,
 		versions: versions,
 	}, nil
 }
