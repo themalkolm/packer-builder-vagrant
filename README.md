@@ -26,7 +26,7 @@ This is not convenient if you think about it. Won't it be nice for packer to aut
 provision it and build a new version right away?
 
 `packer-builder-vagrant` does exactly that. It works as a proxy and finds existing vagrant boxes before starting the
-underlaying actuall builder with the updated configuration.
+underlying actuall builder with the updated configuration.
 
 Installation
 ------------
@@ -104,3 +104,33 @@ Wrap `virtualbox-ovf` in `vagrant` builder the following way:
 Note that `config` key contains full configuration for `virtualbox-ovf` builder except `source_path`.
 `vagrant` builder will find a locally cached file for this specified box and automatically add `source_path`
 key to the `virtualbox-ovf` configuration.
+
+Configuration
+-------------
+
+All configuration properties are **required**, except where noted.
+
+### box_name
+
+The name of the box to find.
+
+### box_version (optional)
+
+Box version to find. It uses most recent version available by default.
+
+### box_provider
+
+Provider to find box for e.g.:
+
+* `virtualbox`
+* `vmware_desktop`
+* [...](https://www.vagrantup.com/docs/providers/)
+
+### box_file
+
+Box file to look for in the box directory. This file will provided in `source_path` to the underlying builder. Different boxes have different file names so it is a *regexp pattern* that must mach **only one** file in the directory.
+
+### builder
+
+Here you should provide configuration for the actual builder to be used. `source_path` will be automatically populated by box discovery. Note that you can always explicitly define `source_path` for test purposes. In this case `source_path` won't be changed.
+
