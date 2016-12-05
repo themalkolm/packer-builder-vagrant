@@ -23,3 +23,38 @@ $ cp packer-builder-vagrant-linux-amd64 ~/.packer.d/plugins/packer-builder-vagra
 ```
 
 See [docs](https://www.packer.io/docs/extend/plugins.html) for more info.
+
+Usage
+-----
+
+Add the builder to your packer template:
+
+```json
+{
+  "builders": [
+    {
+      "type": "vagrant",
+
+      "box_name": "bento/centos-7.2",
+      "box_provider": "virtualbox",
+      "box_file": ".ovf",
+
+      "config": {
+        "type": "virtualbox-ovf",
+        "guest_additions_mode": "disable",
+        "headless": true,
+        "ssh_username": "vagrant",
+        "ssh_password": "vagrant",
+        "ssh_pty": true,
+        "ssh_private_key_file": "key/vagrant",
+        "shutdown_command": "echo '/sbin/halt -h -p' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'"
+      }
+    }
+  ],
+  ...
+}
+```
+
+Note that `config` key contains full configuration for `virtualbox-ovf` builder except source_path.
+`vagrant` builder will find a locally cached file for this specified box and automatically add `source_path`
+key to the `virtualbox-ovf` configuration.
