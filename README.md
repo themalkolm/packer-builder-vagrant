@@ -3,7 +3,7 @@
 Builder proxy. It finds the corresponding vagrant box in the local vagrant cache and
 forwards the actual building the to corresponding builder.
 
-**WARNING** Currently works with `virtualbox-ovf` due me being lazy.
+**WARNING** Currently works only with `virtualbox-ovf` due me being lazy.
 
 Brief
 -----
