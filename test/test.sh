@@ -12,11 +12,15 @@ function say_green {
     echo -e "\x1B[32m${@}\x1B0"
 }
 
-if vagrant box list | grep ${BOX_NAME_42} ; then
-    vagrant box remove -f ${BOX_NAME_42} --all
-fi
-vagrant destroy -f || :
-rm -f Vagrantfile
+function teardown {
+    if vagrant box list | grep ${BOX_NAME_42} ; then
+        vagrant box remove -f ${BOX_NAME_42} --all
+    fi
+    vagrant destroy -f || :
+    rm -f Vagrantfile
+}
+
+teardown
 
 ######################################################################
 # SETUP
@@ -90,21 +94,6 @@ vagrant ssh -- "cat /home/vagrant/foobar"
 
 say_green "${BOX_NAME} VERIFIED!"
 
-######################################################################
-# TEARDOWN
-######################################################################
+teardown
 
-if vagrant box list | grep ${BOX_NAME_42} ; then
-    vagrant box remove -f ${BOX_NAME_42} --all
-fi
-vagrant destroy -f
-rm -f Vagrantfile
-
-######################################################################
-# REPORT
-######################################################################
-
-#
-# Success
-#
 say_green "ALL OK!"
