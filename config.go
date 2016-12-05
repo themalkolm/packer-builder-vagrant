@@ -46,9 +46,6 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	if c.BoxFile == "" {
 		errs = packer.MultiErrorAppend(errs, errors.New("box_file is required"))
 	}
-	if c.Version == "" {
-		c.Version = "0"
-	}
 
 	if _, ok := c.BuilderConfig["source_path"]; !ok {
 		sourcePath, err := findBoxFile(c.Name, c.Version, c.Provider, c.BoxFile)
