@@ -7,7 +7,7 @@ import (
 	"github.com/mitchellh/packer/template/interpolate"
 	"github.com/mitchellh/packer/helper/config"
 	"github.com/mitchellh/packer/packer"
-	"github.com/mitchellh/packer/builder/virtualbox/ovf"
+	"github.com/mitchellh/packer/command"
 )
 
 type Config struct {
@@ -56,16 +56,22 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 		}
 	}
 
+	builderType, err := c.builderType()
+	if err != nil {
+		errs = packer.MultiErrorAppend(errs, err)
+		return c, nil, nil
+	}
+
 	var warnings []string = nil
-	switch c.Provider {
-	case "virtualbox":
-		c.builder = &ovf.Builder{}
+	if b, ok := command.Builders[builderType]; ok {
+		c.builder = b
+
 		warnings, err = c.builder.Prepare(c.BuilderConfig)
 		if err != nil {
 			errs = packer.MultiErrorAppend(errs, err)
 		}
-	default:
-		errs = packer.MultiErrorAppend(errs, fmt.Errorf("unsupported provider: %s", c.Provider))
+	} else {
+		errs = packer.MultiErrorAppend(errs, fmt.Errorf("unsupported builder type: %s", builderType))
 	}
 
 	// Check for any errors.
@@ -76,3 +82,16 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	return c, warnings, nil
 }
 
+func (c *Config) builderType() (string, error) {
+	raw, ok := c.BuilderConfig["type"]
+	if !ok {
+		return "", errors.New("invalid builder config, missing type")
+	}
+
+	t, ok := raw.(string)
+	if !ok {
+		return "", fmt.Errorf("invalid builder type value: %#v", t)
+	}
+
+	return t, nil
+}
