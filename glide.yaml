@@ -10,5 +10,6 @@ import:
   - packer/plugin
   - template/interpolate
 - package: github.com/koding/vagrantutil
+  version: b2ce682200600ff2000bea1013ba7b965e851f87
 - package: github.com/blang/semver
   version: 3.3.0
