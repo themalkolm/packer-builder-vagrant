@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "box_name": null,
+    "box_file": null
+  },
+  "builders": [
+    {
+      "type": "vagrant",
+
+      "box_name": "{{user `box_name`}}",
+      "box_provider": "virtualbox",
+      "box_version": "2.3.1",
+      "box_file": ".ovf",
+
+      "builder": {
+        "type": "virtualbox-ovf",
+        "guest_additions_mode": "disable",
+        "headless": true,
+        "ssh_username": "vagrant",
+        "ssh_password": "vagrant",
+        "ssh_pty": true,
+        "ssh_private_key_file": "key/vagrant",
+        "shutdown_command": "echo '/sbin/halt -h -p' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo 42 > /home/vagrant/foobar",
+        "chown -R vagrant:vagrant /home/vagrant/foobar"
+      ],
+      "execute_command": "{{ .Vars }} sudo -E sh '{{ .Path }}'"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "override": {
+        "virtualbox": {
+          "output": "{{user `box_file`}}"
+        }
+      }
+    }
+  ]
+}
