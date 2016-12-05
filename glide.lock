@@ -1,0 +1,90 @@
+hash: 88724eb937218ac6d44739b99cde55365f4dab87d8a4b5611bfc47b87fc8f6a9
+updated: 2016-12-05T15:53:08.8599647+01:00
+imports:
+- name: github.com/blang/semver
+  version: 60ec3488bfea7cca02b021d106d9911120d25fe9
+- name: github.com/dylanmei/iso8601
+  version: 2075bf119b58e5576c6ed9f867b8f3d17f2e54d4
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-multierror
+  version: 8484912a3b9987857bac52e0c5fec2b95f419628
+- name: github.com/hashicorp/go-version
+  version: e96d3840402619007766590ecea8dd7af1292276
+- name: github.com/hashicorp/yamux
+  version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
+- name: github.com/koding/logging
+  version: 8b5a689ed69b1c7cd1e3595276fc2a352d7818e0
+- name: github.com/koding/vagrantutil
+  version: b2ce682200600ff2000bea1013ba7b965e851f87
+- name: github.com/kr/fs
+  version: 2788f0dbd16903de03cb8186e5c7d97b69ad387b
+- name: github.com/masterzen/azure-sdk-for-go
+  version: ee4f0065d00cd12b542f18f5bc45799e88163b12
+  subpackages:
+  - core/http
+  - core/tls
+- name: github.com/masterzen/simplexml
+  version: 4572e39b1ab9fe03ee513ce6fc7e289e98482190
+  subpackages:
+  - dom
+- name: github.com/masterzen/winrm
+  version: 7a535cd943fccaeed196718896beec3fb51aff41
+  subpackages:
+  - soap
+- name: github.com/masterzen/xmlpath
+  version: 13f4951698adc0fa9c1dda3e275d489a24201161
+- name: github.com/mitchellh/go-fs
+  version: 7bae45d9a684750e82b97ff320c82556614e621b
+  subpackages:
+  - fat
+- name: github.com/mitchellh/iochan
+  version: 87b45ffd0e9581375c491fef3d32130bb15c5bd7
+- name: github.com/mitchellh/mapstructure
+  version: f3009df150dadf309fdee4a54ed65c124afad715
+- name: github.com/mitchellh/multistep
+  version: 162146fc57112954184d90266f4733e900ed05a5
+- name: github.com/mitchellh/packer
+  version: e2fa87a402d9677257e2fbf1b4541b74db6abe63
+  subpackages:
+  - builder
+  - builder/virtualbox/common
+  - builder/virtualbox/ovf
+  - common
+  - common/ssh
+  - common/uuid
+  - communicator/none
+  - communicator/ssh
+  - communicator/winrm
+  - helper/communicator
+  - helper/config
+  - packer
+  - packer/plugin
+  - packer/rpc
+  - template
+  - template/interpolate
+- name: github.com/mitchellh/reflectwalk
+  version: 9ad27c461a633e32a235a061d523aefe8f18571d
+- name: github.com/nu7hatch/gouuid
+  version: 179d4d0c4d8d407a32af483c2354df1d2c91e6c3
+- name: github.com/packer-community/winrmcp
+  version: 7f50d16167d327698b91ccd5363d8691865e2580
+  subpackages:
+  - winrmcp
+- name: github.com/pkg/errors
+  version: 839d9e913e063e28dfd0e6c7b7512793e0a48be9
+- name: github.com/pkg/sftp
+  version: 4d0e916071f68db74f8a73926335f809396d6b42
+- name: github.com/ugorji/go
+  version: 9c7f9b7a2bc3a520f7c7b30b34b7f85f47fe27b6
+  subpackages:
+  - codec
+- name: golang.org/x/crypto
+  version: ca7e7f10cb9fd9c1a6ff7f60436c086d73714180
+  subpackages:
+  - curve25519
+  - ed25519
+  - ed25519/internal/edwards25519
+  - ssh
+  - ssh/agent
+testImports: []

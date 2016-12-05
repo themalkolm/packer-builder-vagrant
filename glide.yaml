@@ -1,0 +1,14 @@
+package: .
+import:
+- package: github.com/mitchellh/packer
+  version: 0.12.0
+  subpackages:
+  - common
+  - builder
+  - helper/config
+  - packer
+  - packer/plugin
+  - template/interpolate
+- package: github.com/koding/vagrantutil
+- package: github.com/blang/semver
+  version: 3.3.0
