@@ -4,8 +4,16 @@ BOX_NAME="bento/centos-7.2"
 BOX_NAME_42="bento42/centos-7.2"
 BOX_FILE="bento-VAGRANTSLASH-centos-7.2-virtualbox.box"
 
+function say_green {
+    #
+    # Using \x1B as OSX has old bash
+    # http://stackoverflow.com/questions/28782394/how-to-get-osx-shell-script-to-show-colors-in-echo
+    #
+    echo -e "\x1B[32m${@}\x1B0"
+}
+
 if vagrant box list | grep ${BOX_NAME_42} ; then
-    vagrant box remove ${BOX_NAME_42} --all
+    vagrant box remove -f ${BOX_NAME_42} --all
 fi
 vagrant destroy -f || :
 rm -f Vagrantfile
@@ -44,6 +52,8 @@ vagrant ssh -- "test ! -f /home/vagrant/foobar"
 vagrant destroy -f
 rm Vagrantfile
 
+say_green "${BOX_NAME} OK!"
+
 ######################################################################
 # TEST
 ######################################################################
@@ -56,6 +66,8 @@ packer build \
     -var "box_file=${BOX_FILE}" \
     template.json
 vagrant box add --force --name ${BOX_NAME_42} ${BOX_FILE}
+
+say_green "${BOX_NAME} REPACKAGED!"
 
 ######################################################################
 # VERIFY
@@ -76,12 +88,14 @@ vagrant up
 vagrant ssh -- "test -f /home/vagrant/foobar"
 vagrant ssh -- "cat /home/vagrant/foobar"
 
+say_green "${BOX_NAME} VERIFIED!"
+
 ######################################################################
 # TEARDOWN
 ######################################################################
 
 if vagrant box list | grep ${BOX_NAME_42} ; then
-    vagrant box remove ${BOX_NAME_42} --all
+    vagrant box remove -f ${BOX_NAME_42} --all
 fi
 vagrant destroy -f
 rm -f Vagrantfile
@@ -93,4 +107,4 @@ rm -f Vagrantfile
 #
 # Success
 #
-echo "OK"
+say_green "ALL OK!"
