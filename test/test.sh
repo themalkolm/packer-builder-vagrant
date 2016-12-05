@@ -12,6 +12,19 @@ function say_green {
     echo -e "\x1B[32m${@}\x1B0"
 }
 
+function setup {
+    if ! vagrant plugin list | grep vagrant-vbguest ; then
+        vagrant plugin install vagrant-vbguest
+    fi
+
+    #
+    # Make sure to have test box
+    #
+    if ! vagrant box list | grep ${BOX_NAME} ; then
+        vagrant box add --force --provider virtualbox ${BOX_NAME}
+    fi
+}
+
 function teardown {
     if vagrant box list | grep ${BOX_NAME_42} ; then
         vagrant box remove -f ${BOX_NAME_42} --all
@@ -26,19 +39,7 @@ teardown
 # SETUP
 ######################################################################
 
-#
-# Maje sure to skip vbguest installations
-#
-if ! vagrant plugin list | grep vagrant-vbguest ; then
-    vagrant plugin install vagrant-vbguest
-fi
-
-#
-# Make sure to have test box
-#
-if ! vagrant box list | grep ${BOX_NAME} ; then
-    vagrant box add --force --provider virtualbox ${BOX_NAME}
-fi
+setup
 
 #
 # Verify initial state
@@ -56,7 +57,7 @@ vagrant ssh -- "test ! -f /home/vagrant/foobar"
 vagrant destroy -f
 rm Vagrantfile
 
-say_green "${BOX_NAME} OK!"
+say_green "${BOX_NAME} INTIAL STATE OK!"
 
 ######################################################################
 # TEST
