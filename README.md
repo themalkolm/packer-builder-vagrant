@@ -47,7 +47,7 @@ Don't forget to strip off os and arch information from the executable i.e:
 
 ```
 $ mkdir -p ~/.packer.d/plugins
-$ cp packer-builder-vagrant-linux-amd64 ~/.packer.d/plugins/packer-builder-vagrant
+$ cp packer-0.12.0_packer-builder-vagrant_linux_amd64 ~/.packer.d/plugins/packer-builder-vagrant
 ```
 
 See [docs](https://www.packer.io/docs/extend/plugins.html) for more info.
