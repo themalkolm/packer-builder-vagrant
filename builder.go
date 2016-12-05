@@ -9,9 +9,7 @@ type Builder struct {
 }
 
 func NewBuilder() *Builder {
-	return &Builder{
-		config: &Config{},
-	}
+	return &Builder{}
 }
 
 func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
