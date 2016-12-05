@@ -15,6 +15,13 @@ rm -f Vagrantfile
 ######################################################################
 
 #
+# Maje sure to skip vbguest installations
+#
+if ! vagrant plugin list | grep vagrant-vbguest ; then
+    vagrant plugin install vagrant-vbguest
+fi
+
+#
 # Make sure to have test box
 #
 if ! vagrant box list | grep ${BOX_NAME} ; then
