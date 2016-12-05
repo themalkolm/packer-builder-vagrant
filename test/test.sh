@@ -31,6 +31,7 @@ function teardown {
     fi
     vagrant destroy -f || :
     rm -f Vagrantfile
+    rm -f *.box || :
 }
 
 teardown
