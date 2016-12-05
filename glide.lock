@@ -1,18 +1,118 @@
-hash: 88724eb937218ac6d44739b99cde55365f4dab87d8a4b5611bfc47b87fc8f6a9
-updated: 2016-12-05T15:53:08.8599647+01:00
+hash: d197fa14fe7ad77330b1c3c0db8f439311bd7709e0344a4a764595b70272c4e0
+updated: 2016-12-06T00:26:21.370719434+01:00
 imports:
+- name: cloud.google.com/go
+  version: ce0b01771fa3c494008bf2fb82d35833f081addc
+  subpackages:
+  - compute/metadata
+  - internal
+- name: github.com/aws/aws-sdk-go
+  version: 173fcf0a78d6bc6c1668a416cdef0032c2a0efab
+  subpackages:
+  - aws
+  - aws/awserr
+  - aws/awsutil
+  - aws/client
+  - aws/client/metadata
+  - aws/corehandlers
+  - aws/credentials
+  - aws/credentials/ec2rolecreds
+  - aws/credentials/endpointcreds
+  - aws/credentials/stscreds
+  - aws/defaults
+  - aws/ec2metadata
+  - aws/endpoints
+  - aws/request
+  - aws/session
+  - aws/signer/v4
+  - private/protocol
+  - private/protocol/ec2query
+  - private/protocol/json/jsonutil
+  - private/protocol/jsonrpc
+  - private/protocol/query
+  - private/protocol/query/queryutil
+  - private/protocol/rest
+  - private/protocol/restxml
+  - private/protocol/xml/xmlutil
+  - private/waiter
+  - service/ec2
+  - service/ecr
+  - service/s3
+  - service/s3/s3iface
+  - service/s3/s3manager
+  - service/sts
+- name: github.com/Azure/azure-sdk-for-go
+  version: 0984e0641ae43b89283223034574d6465be93bf4
+  subpackages:
+  - arm/compute
+  - arm/network
+  - arm/resources/resources
+  - arm/resources/subscriptions
+  - arm/storage
+  - storage
+- name: github.com/Azure/go-autorest
+  version: e0c77ecbe74311e03f2a629834d2110f031f1453
+  subpackages:
+  - autorest
+  - autorest/azure
+  - autorest/date
+  - autorest/to
+  - autorest/validation
+- name: github.com/Azure/go-ntlmssp
+  version: 2d5c7863390875bc4b5f81cdb65422602d15b003
+- name: github.com/biogo/hts
+  version: 319a3a2e4e1c92600d37561287b8c74d6d82f016
+  subpackages:
+  - bgzf
 - name: github.com/blang/semver
   version: 60ec3488bfea7cca02b021d106d9911120d25fe9
+- name: github.com/dgrijalva/jwt-go
+  version: 9ed569b5d1ac936e6494082958d63a6aa4fff99a
+- name: github.com/digitalocean/godo
+  version: 758b5be38ee8c630b0db89b00b7b87f064839099
 - name: github.com/dylanmei/iso8601
   version: 2075bf119b58e5576c6ed9f867b8f3d17f2e54d4
+- name: github.com/go-ini/ini
+  version: 2ba15ac2dc9cdf88c110ec2dc0ced7fa45f5678c
+- name: github.com/golang/protobuf
+  version: 8ee79997227bf9b34611aee7946ae64735e6fd93
+  subpackages:
+  - proto
+- name: github.com/google/go-querystring
+  version: 9235644dd9e52eeae6fa48efd539fdc351a0af53
+  subpackages:
+  - query
+- name: github.com/googleapis/gax-go
+  version: da06d194a00e19ce00d9011a13931c3f6f6887c7
+- name: github.com/hashicorp/atlas-go
+  version: 1792bd8de119ba49b17fd8d3c3c1f488ec613e62
+  subpackages:
+  - archive
+  - v1
 - name: github.com/hashicorp/errwrap
   version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-cleanhttp
+  version: ad28ea4487f05916463e2423a55166280e8254b5
 - name: github.com/hashicorp/go-multierror
   version: 8484912a3b9987857bac52e0c5fec2b95f419628
+- name: github.com/hashicorp/go-rootcerts
+  version: 6bb64b370b90e7ef1fa532be9e591a81c3493e00
 - name: github.com/hashicorp/go-version
   version: e96d3840402619007766590ecea8dd7af1292276
 - name: github.com/hashicorp/yamux
   version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
+- name: github.com/jmespath/go-jmespath
+  version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
+- name: github.com/klauspost/compress
+  version: e3b7981a12dd3cab49afa1d3a50e715846f23732
+  subpackages:
+  - flate
+- name: github.com/klauspost/cpuid
+  version: 09cded8978dc9e80714c4d85b0322337b0a1e5e0
+- name: github.com/klauspost/crc32
+  version: cb6bfca970f6908083f26f39a79009d608efd5cd
+- name: github.com/klauspost/pgzip
+  version: e1189db7261c60cf75c77d573014936620d3d119
 - name: github.com/koding/logging
   version: 8b5a689ed69b1c7cd1e3595276fc2a352d7818e0
 - name: github.com/koding/vagrantutil
@@ -38,6 +138,10 @@ imports:
   version: 7bae45d9a684750e82b97ff320c82556614e621b
   subpackages:
   - fat
+- name: github.com/mitchellh/go-homedir
+  version: b8bc1bf767474819792c23f32d8286a45736f1c6
+- name: github.com/mitchellh/go-vnc
+  version: 723ed9867aed0f3209a81151e52ddc61681f0b01
 - name: github.com/mitchellh/iochan
   version: 87b45ffd0e9581375c491fef3d32130bb15c5bd7
 - name: github.com/mitchellh/mapstructure
@@ -47,22 +151,85 @@ imports:
 - name: github.com/mitchellh/packer
   version: e2fa87a402d9677257e2fbf1b4541b74db6abe63
   subpackages:
-  - builder
+  - builder/amazon/chroot
+  - builder/amazon/common
+  - builder/amazon/ebs
+  - builder/amazon/ebsvolume
+  - builder/amazon/instance
+  - builder/azure/arm
+  - builder/azure/common
+  - builder/azure/common/constants
+  - builder/azure/common/lin
+  - builder/azure/common/logutil
+  - builder/azure/common/template
+  - builder/azure/pkcs12
+  - builder/azure/pkcs12/rc2
+  - builder/cloudstack
+  - builder/digitalocean
+  - builder/docker
+  - builder/file
+  - builder/googlecompute
+  - builder/null
+  - builder/openstack
+  - builder/parallels/common
+  - builder/parallels/iso
+  - builder/parallels/pvm
+  - builder/profitbricks
+  - builder/qemu
   - builder/virtualbox/common
+  - builder/virtualbox/iso
   - builder/virtualbox/ovf
+  - builder/vmware/common
+  - builder/vmware/iso
+  - builder/vmware/vmx
+  - command
   - common
   - common/ssh
   - common/uuid
   - communicator/none
   - communicator/ssh
   - communicator/winrm
+  - fix
   - helper/communicator
   - helper/config
+  - helper/enumflag
+  - helper/flag-kv
+  - helper/flag-slice
   - packer
   - packer/plugin
   - packer/rpc
+  - post-processor/amazon-import
+  - post-processor/artifice
+  - post-processor/atlas
+  - post-processor/checksum
+  - post-processor/compress
+  - post-processor/docker-import
+  - post-processor/docker-push
+  - post-processor/docker-save
+  - post-processor/docker-tag
+  - post-processor/googlecompute-export
+  - post-processor/manifest
+  - post-processor/shell-local
+  - post-processor/vagrant
+  - post-processor/vagrant-cloud
+  - post-processor/vsphere
+  - provisioner
+  - provisioner/ansible
+  - provisioner/ansible-local
+  - provisioner/chef-client
+  - provisioner/chef-solo
+  - provisioner/file
+  - provisioner/powershell
+  - provisioner/puppet-masterless
+  - provisioner/puppet-server
+  - provisioner/salt-masterless
+  - provisioner/shell
+  - provisioner/shell-local
+  - provisioner/windows-restart
+  - provisioner/windows-shell
   - template
   - template/interpolate
+  - version
 - name: github.com/mitchellh/reflectwalk
   version: 9ad27c461a633e32a235a061d523aefe8f18571d
 - name: github.com/nu7hatch/gouuid
@@ -71,20 +238,111 @@ imports:
   version: 7f50d16167d327698b91ccd5363d8691865e2580
   subpackages:
   - winrmcp
+- name: github.com/pierrec/lz4
+  version: ed384a0ef355ee01915875486e8c245ebd567527
+- name: github.com/pierrec/xxHash
+  version: 5a004441f897722c627870a981d02b29924215fa
+  subpackages:
+  - xxHash32
 - name: github.com/pkg/errors
   version: 839d9e913e063e28dfd0e6c7b7512793e0a48be9
 - name: github.com/pkg/sftp
   version: 4d0e916071f68db74f8a73926335f809396d6b42
+- name: github.com/profitbricks/profitbricks-sdk-go
+  version: 4765c76b6cb18b03649f2fa84cd5a83efcccb777
+- name: github.com/rackspace/gophercloud
+  version: e00690e87603abe613e9f02c816c7c4bef82e063
+  subpackages:
+  - openstack
+  - openstack/common/extensions
+  - openstack/compute/v2/extensions
+  - openstack/compute/v2/extensions/floatingip
+  - openstack/compute/v2/extensions/keypairs
+  - openstack/compute/v2/extensions/startstop
+  - openstack/compute/v2/flavors
+  - openstack/compute/v2/images
+  - openstack/compute/v2/servers
+  - openstack/identity/v2/tenants
+  - openstack/identity/v2/tokens
+  - openstack/identity/v3/tokens
+  - openstack/utils
+  - pagination
+  - testhelper
+  - testhelper/client
+- name: github.com/tent/http-link-go
+  version: ac974c61c2f990f4115b119354b5e0b47550e888
 - name: github.com/ugorji/go
   version: 9c7f9b7a2bc3a520f7c7b30b34b7f85f47fe27b6
   subpackages:
   - codec
+- name: github.com/xanzy/go-cloudstack
+  version: deca6e17c056012b540aa2d2eae3ea1e63203b85
+  subpackages:
+  - cloudstack
 - name: golang.org/x/crypto
   version: ca7e7f10cb9fd9c1a6ff7f60436c086d73714180
   subpackages:
   - curve25519
   - ed25519
   - ed25519/internal/edwards25519
+  - md4
   - ssh
   - ssh/agent
+- name: golang.org/x/net
+  version: 6cdc0daab091c43fc46193327e0047b4f883c613
+  repo: https://github.com/golang/net.git
+  vcs: git
+  subpackages:
+  - .
+  - context
+  - context/ctxhttp
+  - html
+  - html/atom
+  - http2
+  - http2/hpack
+  - idna
+  - internal/timeseries
+  - lex/httplex
+  - trace
+- name: golang.org/x/oauth2
+  version: f6093e37b6cb4092101a298aba5d794eb570757f
+  subpackages:
+  - google
+  - internal
+  - jws
+  - jwt
+- name: google.golang.org/api
+  version: 793872d1e17c62c1e2e4e305cac963158acb8624
+  subpackages:
+  - compute/v1
+  - gensupport
+  - googleapi
+  - googleapi/internal/uritemplates
+- name: google.golang.org/appengine
+  version: ca59ef35f409df61fa4a5f8290ff289b37eccfb8
+  subpackages:
+  - internal
+  - internal/app_identity
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/modules
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+- name: google.golang.org/grpc
+  version: 708a7f9f3283aa2d4f6132d287d78683babe55c8
+  subpackages:
+  - codes
+  - credentials
+  - grpclog
+  - internal
+  - metadata
+  - naming
+  - peer
+  - stats
+  - tap
+  - transport
+- name: gopkg.in/xmlpath.v2
+  version: 860cbeca3ebcc600db0b213c0e83ad6ce91f5739
 testImports: []
