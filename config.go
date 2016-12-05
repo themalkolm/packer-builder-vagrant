@@ -11,15 +11,15 @@ import (
 )
 
 type Config struct {
-	Name     string `mapstructure:"box_name"`
-	Version  string `mapstructure:"box_version"`
-	Provider string `mapstructure:"box_provider"`
-	BoxFile  string `mapstructure:"box_file"`
+	Name          string `mapstructure:"box_name"`
+	Version       string `mapstructure:"box_version"`
+	Provider      string `mapstructure:"box_provider"`
+	BoxFile       string `mapstructure:"box_file"`
 
-	Config   map[string]interface{} `mapstructure:"config"`
+	BuilderConfig map[string]interface{} `mapstructure:"builder"`
 
-	builder  packer.Builder
-	ctx      interpolate.Context
+	builder       packer.Builder
+	ctx           interpolate.Context
 }
 
 func NewConfig(raws ...interface{}) (*Config, []string, error) {
@@ -50,12 +50,12 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 		c.Version = "0"
 	}
 
-	if _, ok := c.Config["source_path"]; !ok {
+	if _, ok := c.BuilderConfig["source_path"]; !ok {
 		sourcePath, err := findBoxFile(c.Name, c.Version, c.Provider, c.BoxFile)
 		if err != nil {
 			errs = packer.MultiErrorAppend(errs, err)
 		} else {
-			c.Config["source_path"] = sourcePath
+			c.BuilderConfig["source_path"] = sourcePath
 		}
 	}
 
@@ -63,7 +63,7 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	switch c.Provider {
 	case "virtualbox":
 		c.builder = &ovf.Builder{}
-		warnings, err = c.builder.Prepare(c.Config)
+		warnings, err = c.builder.Prepare(c.BuilderConfig)
 		if err != nil {
 			errs = packer.MultiErrorAppend(errs, err)
 		}
