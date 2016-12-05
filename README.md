@@ -4,6 +4,7 @@ Builder proxy. It finds the corresponding vagrant box in the local vagrant cache
 forwards the actual building the to corresponding builder.
 
 **WARNING** Currently works only with `virtualbox-ovf` due me being lazy.
+**WARNING** Currently works only with already downloaded vagrant boxes. It **won't** download missing ones.
 
 Brief
 -----
