@@ -2,18 +2,18 @@ sudo: false
 language: go
 go:
   - 1.7
-env:
-  - GOOS=windows GOARCH=amd64
-  - GOOS=darwin GOARCH=amd64
-  - GOOS=linux GOARCH=amd64
+install:
+  - go get github.com/mitchellh/gox
 script:
   - ln -s ${TRAVIS_BUILD_DIR} ${GOPATH}/src/github.com/${TRAVIS_REPO_SLUG}
-  - go build -v -o ./build/packer-builder-vagrant-${GOOS}-${GOARCH} github.com/${TRAVIS_REPO_SLUG}
+  - gox -arch="amd64" -os="darwin linux windows" -output "build/{{.Dir}}-{{.OS}}-{{.Arch}}" github.com/${TRAVIS_REPO_SLUG}
 deploy:
   - provider: releases
     api_key: ${GITHUB_API_KEY}
     file:
-      - build/packer-builder-vagrant-${GOOS}-${GOARCH}
+      - build/packer-builder-vagrant-darwin-amd64
+      - build/packer-builder-vagrant-linux-amd64
+      - build/packer-builder-vagrant-windows-amd64.exe
     skip_cleanup: true
     overwrite: true
     on:
