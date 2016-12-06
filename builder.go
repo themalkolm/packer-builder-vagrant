@@ -30,7 +30,12 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 	ui.Message("(vagrant) Builder source_path ...")
 	c := b.config
 	if _, ok := c.BuilderConfig["source_path"]; !ok {
-		sourcePath, err := fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
+		v, err := NewVagrant(ui)
+		if err != nil {
+			return nil, err
+		}
+
+		sourcePath, err := v.fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
 		if err != nil {
 			return nil, err
 		}

@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
-	"log"
 	"regexp"
 	"sort"
 	"strings"
@@ -13,11 +12,28 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/koding/vagrantutil"
+	"github.com/mitchellh/packer/packer"
 )
 
 const (
 	defaultVersion = "0"
 )
+
+type Vagrant struct {
+	ui      packer.Ui
+	vagrant *vagrantutil.Vagrant
+}
+
+func NewVagrant(ui packer.Ui) (*Vagrant, error) {
+	v, err := vagrantutil.NewVagrant(".")
+	if err != nil {
+		return nil, err
+	}
+	return &Vagrant{
+		ui: ui,
+		vagrant: v,
+	}
+}
 
 type boxSorter struct {
 	boxes    []*vagrantutil.Box
@@ -57,8 +73,8 @@ func (s *boxSorter) Less(i, j int) bool {
 	return (*s.versions[i]).LT(*s.versions[j])
 }
 
-func fetchBoxFile(url, name, version, provider, pattern string) (string, error) {
-	box, err := fetchBox(url, name, version, provider)
+func (v *Vagrant) fetchBoxFile(url, name, version, provider, pattern string) (string, error) {
+	box, err := v.fetchBox(url, name, version, provider)
 	if err != nil {
 		return "", err
 	}
@@ -106,34 +122,28 @@ func fetchBoxFile(url, name, version, provider, pattern string) (string, error) 
 	return found[0], nil
 }
 
-func downloadBox(nameOrUrl, version, provider string) (bool, error) {
-	v, err := vagrantutil.NewVagrant(".")
-	if err != nil {
-		return false, err
-	}
-
+func (v *Vagrant) downloadBox(nameOrUrl, version, provider string) (bool, error) {
 	box := vagrantutil.Box{
 		Name: nameOrUrl,
 		Provider: provider,
 		Version: version,
 	}
 
-	output, err := v.BoxAdd(&box)
+	output, err := v.vagrant.BoxAdd(&box)
 	if err != nil {
 		return false, err
 	}
 
 	var outputErr error = nil
 	for res := range output {
-		if outputErr != nil {
-			continue // consume all lines
-		}
-
-		if res.Error != nil {
-			outputErr = res.Error
+		if res.Error == nil {
+			v.ui.Message(fmt.Sprintf("(vagrant) %s", res.Line))
 			continue
 		}
-		log.Println(res.Line)
+
+		if outputErr == nil {
+			outputErr = res.Error // yeah, lets remember only first error
+		}
 	}
 	if outputErr != nil {
 		return false, outputErr
@@ -141,8 +151,8 @@ func downloadBox(nameOrUrl, version, provider string) (bool, error) {
 	return true, nil
 }
 
-func fetchBox(url, name, version, provider string) (*vagrantutil.Box, error) {
-	box, err := findBox(name, version, provider)
+func (v *Vagrant) fetchBox(url, name, version, provider string) (*vagrantutil.Box, error) {
+	box, err := v.findBox(name, version, provider)
 	if err != nil {
 		return nil, err
 	}
@@ -156,25 +166,22 @@ func fetchBox(url, name, version, provider string) (*vagrantutil.Box, error) {
 		nameOrUrl = url
 	}
 
-	ok, err := downloadBox(nameOrUrl, version, provider)
+	v.ui.Message(fmt.Sprintf("(vagrant) Downloading box: %s (%s, %s)", nameOrUrl, provider, version))
+	ok, err := v.downloadBox(nameOrUrl, version, provider)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error while downloading box: %s", err)
 	}
+	v.ui.Message(fmt.Sprintf("(vagrant) Downloaded box: %s (%s, %s)", nameOrUrl, provider, version))
 
 	if !ok {
 		return nil, fmt.Errorf("Failed to cache box: %s (%s, %s)", name, provider, version)
 	}
 
-	return findBox(name, version, provider)
+	return v.findBox(name, version, provider)
 }
 
-func findBox(name, version, provider string) (*vagrantutil.Box, error) {
-	v, err := vagrantutil.NewVagrant(".")
-	if err != nil {
-		return nil, err
-	}
-
-	boxes, err := v.BoxList()
+func (v *Vagrant) findBox(name, version, provider string) (*vagrantutil.Box, error) {
+	boxes, err := v.vagrant.BoxList()
 	if err != nil {
 		return nil, err
 	}
