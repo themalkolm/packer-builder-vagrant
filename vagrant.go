@@ -136,14 +136,16 @@ func (v *Vagrant) downloadBox(nameOrUrl, version, provider string) (bool, error)
 
 	var outputErr error = nil
 	for res := range output {
-		if res.Error == nil {
-			v.ui.Message(fmt.Sprintf("(vagrant) %s", res.Line))
+		if res.Error != nil {
+			outputErr = packer.MultiErrorAppend(outputErr, res.Error)
 			continue
 		}
 
-		if outputErr == nil {
-			outputErr = res.Error // yeah, lets remember only first error
+		line := res.Line
+		if strings.HasPrefix(line, "==> ") {
+			line = strings.TrimPrefix(line, "==> ")
 		}
+		v.ui.Message(fmt.Sprintf("(vagrant) %s", line))
 	}
 	if outputErr != nil {
 		return false, outputErr
