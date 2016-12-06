@@ -63,6 +63,10 @@ func findBoxFile(name, version, provider string, pattern string) (string, error)
 		return "", err
 	}
 
+	if box == nil {
+		return "", fmt.Errorf("Can't find box: %s (%s, %s)", name, provider, version)
+	}
+
 	root, err := boxDir(box)
 	if err != nil {
 		return "", err
@@ -144,9 +148,6 @@ func findCachedBox(name, version, provider string) (*vagrantutil.Box, error) {
 		box = found[len(found) - 1]
 	}
 
-	if box == nil {
-		return nil, fmt.Errorf("Can't find box: %s (%s, %s)", name, provider, version)
-	}
 	return box, nil
 }
 
