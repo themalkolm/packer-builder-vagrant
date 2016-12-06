@@ -16,13 +16,6 @@ function setup {
     if ! vagrant plugin list | grep vagrant-vbguest ; then
         vagrant plugin install vagrant-vbguest
     fi
-
-    #
-    # Make sure to have test box
-    #
-    if ! vagrant box list | grep ${BOX_NAME} ; then
-        vagrant box add --force --provider virtualbox ${BOX_NAME}
-    fi
 }
 
 function teardown {
