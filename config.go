@@ -48,6 +48,8 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	}
 
 	if _, ok := c.BuilderConfig["source_path"]; !ok {
+		// TODO(themalkolm): Probably we should not download boxes in ctor. So.. should we move builder creation to
+		// Builder::Run then?
 		sourcePath, err := fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
 		if err != nil {
 			errs = packer.MultiErrorAppend(errs, err)
