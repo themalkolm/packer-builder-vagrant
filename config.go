@@ -12,6 +12,7 @@ import (
 
 type Config struct {
 	Name          string `mapstructure:"box_name"`
+	URL           string `mapstructure:"box_url"`
 	Version       string `mapstructure:"box_version"`
 	Provider      string `mapstructure:"box_provider"`
 	BoxFile       string `mapstructure:"box_file"`
@@ -47,7 +48,7 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	}
 
 	if _, ok := c.BuilderConfig["source_path"]; !ok {
-		sourcePath, err := findBoxFile(c.Name, c.Version, c.Provider, c.BoxFile)
+		sourcePath, err := fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
 		if err != nil {
 			errs = packer.MultiErrorAppend(errs, err)
 		} else {

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
+	"log"
 	"regexp"
 	"sort"
 	"strings"
@@ -56,9 +57,8 @@ func (s *boxSorter) Less(i, j int) bool {
 	return (*s.versions[i]).LT(*s.versions[j])
 }
 
-// Find a file from the box's directory matching the provided pattern
-func findBoxFile(name, version, provider string, pattern string) (string, error) {
-	box, err := findCachedBox(name, version, provider)
+func fetchBoxFile(url, name, version, provider, pattern string) (string, error) {
+	box, err := fetchBox(url, name, version, provider)
 	if err != nil {
 		return "", err
 	}
@@ -106,8 +106,69 @@ func findBoxFile(name, version, provider string, pattern string) (string, error)
 	return found[0], nil
 }
 
-// Find a box with the provided name, provide and version.
-func findCachedBox(name, version, provider string) (*vagrantutil.Box, error) {
+func downloadBox(nameOrUrl, version, provider string) (bool, error) {
+	v, err := vagrantutil.NewVagrant(".")
+	if err != nil {
+		return false, err
+	}
+
+	box := vagrantutil.Box{
+		Name: nameOrUrl,
+		Provider: provider,
+		Version: version,
+	}
+
+	output, err := v.BoxAdd(&box)
+	if err != nil {
+		return false, err
+	}
+
+	var outputErr error = nil
+	for res := range output {
+		if outputErr != nil {
+			continue // consume all lines
+		}
+
+		if res.Error != nil {
+			outputErr = res.Error
+			continue
+		}
+		log.Println(res.Line)
+	}
+	if outputErr != nil {
+		return false, outputErr
+	}
+	return true, nil
+}
+
+func fetchBox(url, name, version, provider string) (*vagrantutil.Box, error) {
+	box, err := findBox(name, version, provider)
+	if err != nil {
+		return nil, err
+	}
+
+	if box != nil {
+		return box, nil
+	}
+
+	nameOrUrl := name
+	if url != "" {
+		nameOrUrl = url
+	}
+
+	ok, err := downloadBox(nameOrUrl, version, provider)
+	if err != nil {
+		return nil, err
+	}
+
+	if !ok {
+		return nil, fmt.Errorf("Failed to cache box: %s (%s, %s)", name, provider, version)
+	}
+
+	return findBox(name, version, provider)
+}
+
+func findBox(name, version, provider string) (*vagrantutil.Box, error) {
 	v, err := vagrantutil.NewVagrant(".")
 	if err != nil {
 		return nil, err
@@ -151,7 +212,6 @@ func findCachedBox(name, version, provider string) (*vagrantutil.Box, error) {
 	return box, nil
 }
 
-// Return directory where all box files are stored
 func boxDir(b *vagrantutil.Box) (string, error) {
 	name := b.Name
 	version := b.Version
