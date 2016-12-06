@@ -32,7 +32,7 @@ func NewVagrant(ui packer.Ui) (*Vagrant, error) {
 	return &Vagrant{
 		ui: ui,
 		vagrant: v,
-	}
+	}, nil
 }
 
 type boxSorter struct {
