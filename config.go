@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mitchellh/packer/command"
 	"github.com/mitchellh/packer/helper/config"
 	"github.com/mitchellh/packer/packer"
 	"github.com/mitchellh/packer/template/interpolate"
@@ -19,7 +18,6 @@ type Config struct {
 
 	BuilderConfig map[string]interface{} `mapstructure:"builder"`
 
-	builder       packer.Builder
 	ctx           interpolate.Context
 }
 
@@ -47,41 +45,12 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 		errs = packer.MultiErrorAppend(errs, errors.New("box_file is required"))
 	}
 
-	if _, ok := c.BuilderConfig["source_path"]; !ok {
-		// TODO(themalkolm): Probably we should not download boxes in ctor. So.. should we move builder creation to
-		// Builder::Run then?
-		sourcePath, err := fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
-		if err != nil {
-			errs = packer.MultiErrorAppend(errs, err)
-		} else {
-			c.BuilderConfig["source_path"] = sourcePath
-		}
-	}
-
-	builderType, err := c.builderType()
-	if err != nil {
-		errs = packer.MultiErrorAppend(errs, err)
-		return c, nil, nil
-	}
-
-	var warnings []string = nil
-	if b, ok := command.Builders[builderType]; ok {
-		c.builder = b
-
-		warnings, err = c.builder.Prepare(c.BuilderConfig)
-		if err != nil {
-			errs = packer.MultiErrorAppend(errs, err)
-		}
-	} else {
-		errs = packer.MultiErrorAppend(errs, fmt.Errorf("unsupported builder type: %s", builderType))
-	}
-
 	// Check for any errors.
 	if errs != nil && len(errs.Errors) > 0 {
-		return nil, warnings, errs
+		return nil, nil, errs
 	}
 
-	return c, warnings, nil
+	return c, nil, nil
 }
 
 func (c *Config) builderType() (string, error) {

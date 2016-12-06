@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/mitchellh/packer/command"
 	"github.com/mitchellh/packer/packer"
 )
 
 type Builder struct {
-	config *Config
+	config  *Config
+	builder packer.Builder
 }
 
 func NewBuilder() *Builder {
@@ -23,9 +27,33 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 }
 
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
-	return b.config.builder.Run(ui, hook, cache)
+	c := b.config
+	if _, ok := c.BuilderConfig["source_path"]; !ok {
+		sourcePath, err := fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
+		if err != nil {
+			return nil, err
+		}
+		c.BuilderConfig["source_path"] = sourcePath
+	}
+
+	builderType, err := c.builderType()
+	if err != nil {
+		return nil, err
+	}
+
+	builder, found := command.Builders[builderType];
+	if !found {
+		return nil, fmt.Errorf("unsupported builder type: %s", builderType)
+	}
+
+	b.builder = builder
+	_, err = b.builder.Prepare(c.BuilderConfig)
+	if err != nil {
+		return nil, err
+	}
+	return b.builder.Run(ui, hook, cache)
 }
 
 func (b *Builder) Cancel() {
-	b.config.builder.Cancel()
+	b.builder.Cancel()
 }
