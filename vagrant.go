@@ -125,16 +125,16 @@ func findCachedBox(name, version, provider string) (*vagrantutil.Box, error) {
 		}
 	}
 
-	if len(found) == 0 {
-		return nil, fmt.Errorf("Can't find box: %s (%s, %s)", name, provider, version)
-	}
-
 	s, err := newBoxSorter(found)
 	if err != nil {
 		return nil, err
 	}
 
 	sort.Sort(s)
+
+	if len(found) == 0 {
+		return nil, nil
+	}
 
 	var box *vagrantutil.Box = nil
 	if version != "" {
