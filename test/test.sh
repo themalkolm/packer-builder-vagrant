@@ -42,24 +42,6 @@ teardown
 
 setup
 
-#
-# Verify initial state
-#
-cat > Vagrantfile << HERE
-Vagrant.configure("2") do |config|
-  config.vm.provider "virtualbox"
-
-  config.vm.box = "${BOX_NAME}"
-  config.vbguest.auto_update = false
-end
-HERE
-vagrant up
-vagrant ssh -- "test ! -f /home/vagrant/foobar"
-vagrant destroy -f
-rm Vagrantfile
-
-say_green "${BOX_NAME} INTIAL STATE OK!"
-
 ######################################################################
 # TEST
 ######################################################################
