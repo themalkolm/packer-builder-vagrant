@@ -4,12 +4,15 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/mitchellh/packer/common"
 	"github.com/mitchellh/packer/helper/config"
 	"github.com/mitchellh/packer/packer"
 	"github.com/mitchellh/packer/template/interpolate"
 )
 
 type Config struct {
+	common.PackerConfig  `mapstructure:",squash"`
+
 	Name          string `mapstructure:"box_name"`
 	URL           string `mapstructure:"box_url"`
 	Version       string `mapstructure:"box_version"`
