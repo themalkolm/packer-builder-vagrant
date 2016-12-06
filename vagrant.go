@@ -58,7 +58,7 @@ func (s *boxSorter) Less(i, j int) bool {
 
 // Find a file from the box's directory matching the provided pattern
 func findBoxFile(name, version, provider string, pattern string) (string, error) {
-	box, err := findBox(name, version, provider)
+	box, err := findCachedBox(name, version, provider)
 	if err != nil {
 		return "", err
 	}
@@ -103,7 +103,7 @@ func findBoxFile(name, version, provider string, pattern string) (string, error)
 }
 
 // Find a box with the provided name, provide and version.
-func findBox(name, version, provider string) (*vagrantutil.Box, error) {
+func findCachedBox(name, version, provider string) (*vagrantutil.Box, error) {
 	v, err := vagrantutil.NewVagrant(".")
 	if err != nil {
 		return nil, err
