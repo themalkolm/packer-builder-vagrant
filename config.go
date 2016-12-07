@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/mitchellh/packer/common"
 	"github.com/mitchellh/packer/helper/config"
@@ -56,16 +55,3 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 	return c, nil, nil
 }
 
-func (c *Config) builderType() (string, error) {
-	raw, ok := c.BuilderConfig["type"]
-	if !ok {
-		return "", errors.New("invalid builder config, missing type")
-	}
-
-	t, ok := raw.(string)
-	if !ok {
-		return "", fmt.Errorf("invalid builder type value: %#v", t)
-	}
-
-	return t, nil
-}

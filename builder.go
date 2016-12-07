@@ -1,15 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"errors"
 
-	"github.com/mitchellh/packer/command"
+	"github.com/mitchellh/multistep"
+	"github.com/mitchellh/packer/common"
 	"github.com/mitchellh/packer/packer"
 )
 
 type Builder struct {
-	config  *Config
-	builder packer.Builder
+	config *Config
+	runner multistep.Runner
 }
 
 func NewBuilder() *Builder {
@@ -27,58 +29,51 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 }
 
 func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packer.Artifact, error) {
-	ui.Message("(vagrant) Builder source_path ...")
-	c := b.config
-	if _, ok := c.BuilderConfig["source_path"]; !ok {
-		v, err := NewVagrant(ui)
-		if err != nil {
-			return nil, err
-		}
+	// Set up the state.
+	state := new(multistep.BasicStateBag)
+	state.Put("ui", ui)
+	state.Put("hook", hook)
+	state.Put("cache", cache)
 
-		sourcePath, err := v.fetchBoxFile(c.URL, c.Name, c.Version, c.Provider, c.BoxFile)
-		if err != nil {
-			return nil, err
-		}
-		c.BuilderConfig["source_path"] = sourcePath
+	// Build the steps.
+	steps := []multistep.Step{
+		&StepFetchBox{
+			URL:           b.config.URL,
+			Name:          b.config.Name,
+			Version:       b.config.Version,
+			Provider:      b.config.Provider,
+			BoxFile :      b.config.BoxFile,
+			BuilderConfig: b.config.BuilderConfig,
+		},
+		&StepBuilder{
+			BuilderConfig: b.config.BuilderConfig,
+		},
 	}
-	ui.Message(fmt.Sprintf("(vagrant) Builder source_path: %s", c.BuilderConfig["source_path"]))
 
-	ui.Message("(vagrant) Builder type ...")
-	builderType, err := c.builderType()
-	if err != nil {
-		return nil, err
-	}
-	ui.Message(fmt.Sprintf("(vagrant) Builder type: %s", builderType))
+	// Run the steps.
+	b.runner = common.NewRunnerWithPauseFn(steps, b.config.PackerConfig, ui, state)
+	b.runner.Run(state)
 
-	ui.Message("(vagrant) Builder ...")
-	builder, found := command.Builders[builderType];
-	if !found {
-		return nil, fmt.Errorf("unsupported builder type: %s", builderType)
+	// Report any errors.
+	if err, ok := state.GetOk("error"); ok {
+		return nil, err.(error)
 	}
-	ui.Message("(vagrant) Builder: OK")
 
-	ui.Message("(vagrant) Builder prepare ...")
-	b.builder = builder
-	warnings, err := b.builder.Prepare(c.BuilderConfig)
-	if err != nil {
-		return nil, err
+	// If we were interrupted or cancelled, then just exit.
+	if _, ok := state.GetOk(multistep.StateCancelled); ok {
+		return nil, errors.New("Build was cancelled.")
 	}
-	if warnings != nil && len(warnings) > 0 {
-		for _, w := range warnings {
-			ui.Message(fmt.Sprintf("(vagrant) WARNING: %s", w))
-		}
-	}
-	ui.Message("(vagrant) Builder prepare: OK")
 
-	ui.Message("(vagrant) Builder run ...")
-	a, err := b.builder.Run(ui, hook, cache)
-	if err != nil {
-		return nil, err
+	if _, ok := state.GetOk(multistep.StateHalted); ok {
+		return nil, errors.New("Build was halted.")
 	}
-	ui.Message("(vagrant) Builder run: OK")
-	return a, nil
+
+	return state.Get("artifact").(packer.Artifact), nil
 }
 
 func (b *Builder) Cancel() {
-	b.builder.Cancel()
+	if b.runner != nil {
+		log.Println("Cancelling the step runner...")
+		b.runner.Cancel()
+	}
 }
