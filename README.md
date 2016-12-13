@@ -6,8 +6,6 @@ forwards the actual building the to corresponding builder.
 **WARNING** It essentially compiles **whole** packer code to allow us to configure any
 builder plugin.
 
-**WARNING** Currently works only with already downloaded vagrant boxes. It **won't** download missing ones.
-
 Brief
 -----
 
