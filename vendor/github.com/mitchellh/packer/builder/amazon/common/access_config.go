@@ -45,6 +45,7 @@ func (c *AccessConfig) Config() (*aws.Config, error) {
 			return nil, err
 		}
 	} else {
+		sess := session.New(config)
 		creds = credentials.NewChainCredentials([]credentials.Provider{
 			&credentials.StaticProvider{Value: credentials.Value{
 				AccessKeyID:     c.AccessKey,
@@ -54,7 +55,7 @@ func (c *AccessConfig) Config() (*aws.Config, error) {
 			&credentials.EnvProvider{},
 			&credentials.SharedCredentialsProvider{Filename: "", Profile: ""},
 			&ec2rolecreds.EC2RoleProvider{
-				Client: ec2metadata.New(session.New(config)),
+				Client: ec2metadata.New(sess),
 			},
 		})
 	}

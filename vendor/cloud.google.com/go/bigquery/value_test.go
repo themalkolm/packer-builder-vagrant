@@ -376,6 +376,37 @@ func TestValuesSaverConvertsToMap(t *testing.T) {
 				},
 			},
 		},
+		{ // repeated nested field
+			vs: ValuesSaver{
+				Schema: Schema{
+					{
+						Name: "records",
+						Type: RecordFieldType,
+						Schema: Schema{
+							{Name: "x", Type: IntegerFieldType},
+							{Name: "y", Type: IntegerFieldType},
+						},
+						Repeated: true,
+					},
+				},
+				InsertID: "iid",
+				Row: []Value{ // a row is a []Value
+					[]Value{ // repeated field's value is a []Value
+						[]Value{1, 2}, // first record of the repeated field
+						[]Value{3, 4}, // second record
+					},
+				},
+			},
+			want: &insertionRow{
+				InsertID: "iid",
+				Row: map[string]Value{
+					"records": []Value{
+						map[string]Value{"x": 1, "y": 2},
+						map[string]Value{"x": 3, "y": 4},
+					},
+				},
+			},
+		},
 	}
 	for _, tc := range testCases {
 		data, insertID, err := tc.vs.Save()
@@ -384,32 +415,84 @@ func TestValuesSaverConvertsToMap(t *testing.T) {
 		}
 		got := &insertionRow{insertID, data}
 		if !reflect.DeepEqual(got, tc.want) {
-			t.Errorf("saving ValuesSaver: got:\n%v\nwant:\n%v", got, tc.want)
+			t.Errorf("saving ValuesSaver:\ngot:\n%+v\nwant:\n%+v", got, tc.want)
 		}
 	}
 }
 
 func TestStructSaver(t *testing.T) {
-	type S struct{ X int }
-	want := map[string]Value{"X": 7}
+	schema := Schema{
+		{Name: "s", Type: StringFieldType},
+		{Name: "r", Type: IntegerFieldType, Repeated: true},
+		{Name: "nested", Type: RecordFieldType, Schema: Schema{
+			{Name: "b", Type: BooleanFieldType},
+		}},
+		{Name: "rnested", Type: RecordFieldType, Repeated: true, Schema: Schema{
+			{Name: "b", Type: BooleanFieldType},
+		}},
+	}
 
-	check := func(x interface{}) {
-		ss := structSaver{reflect.ValueOf(x)}
-		row, iid, err := ss.Save()
+	type (
+		N struct{ B bool }
+		T struct {
+			S       string
+			R       []int
+			Nested  *N
+			Rnested []*N
+		}
+	)
+
+	check := func(msg string, in interface{}, want map[string]Value) {
+		ss := StructSaver{
+			Schema:   schema,
+			InsertID: "iid",
+			Struct:   in,
+		}
+		got, gotIID, err := ss.Save()
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("%s: %v", msg, err)
 		}
-		if iid != "" {
-			t.Errorf("%#v: got iid %q, want empty string", x, iid)
+		if wantIID := "iid"; gotIID != wantIID {
+			t.Errorf("%s: InsertID: got %q, want %q", msg, gotIID, wantIID)
 		}
-		if !reflect.DeepEqual(row, want) {
-			t.Errorf("%#v: got %+v, want %+v", x, row, want)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("%s:\ngot\n%#v\nwant\n%#v", msg, got, want)
 		}
 	}
 
-	s := S{X: 7}
-	check(s)
-	check(&s)
+	in := T{
+		S:       "x",
+		R:       []int{1, 2},
+		Nested:  &N{B: true},
+		Rnested: []*N{{true}, {false}},
+	}
+	want := map[string]Value{
+		"s":       "x",
+		"r":       []int{1, 2},
+		"nested":  map[string]Value{"b": true},
+		"rnested": []Value{map[string]Value{"b": true}, map[string]Value{"b": false}},
+	}
+	check("all values", in, want)
+	check("all values, ptr", &in, want)
+	check("empty struct", T{}, map[string]Value{
+		"s": "",
+		"r": []int(nil),
+	})
+
+	// Missing and extra fields ignored.
+	type T2 struct {
+		S string
+		// missing R, Nested, RNested
+		Extra int
+	}
+	check("missing and extra", T2{S: "x"}, map[string]Value{"s": "x"})
+
+	check("nils in slice", T{Rnested: []*N{{true}, nil, {false}}},
+		map[string]Value{
+			"s":       "",
+			"r":       []int(nil),
+			"rnested": []Value{map[string]Value{"b": true}, map[string]Value(nil), map[string]Value{"b": false}},
+		})
 }
 
 func TestConvertRows(t *testing.T) {
@@ -513,6 +596,7 @@ var (
 			{Name: "nestS", Type: StringFieldType},
 			{Name: "nestI", Type: IntegerFieldType},
 		}},
+		{Name: "t", Type: StringFieldType},
 	}
 
 	testTimestamp = time.Date(2016, 11, 5, 7, 50, 22, 8, time.UTC)
@@ -522,7 +606,7 @@ var (
 
 	testValues = []Value{"x", "y", []byte{1, 2, 3}, int64(7), 3.14, true,
 		testTimestamp, testDate, testTime, testDateTime,
-		[]Value{"nested", int64(17)}}
+		[]Value{"nested", int64(17)}, "z"}
 )
 
 type testStruct1 struct {
@@ -535,6 +619,7 @@ type testStruct1 struct {
 	s      string
 	F      float64
 	Nested nested
+	Tagged string `bigquery:"t"`
 }
 
 type String string
@@ -567,6 +652,7 @@ func TestStructLoader(t *testing.T) {
 		S2:     "y",
 		By:     []byte{1, 2, 3},
 		Nested: nested{NestS: "nested", NestI: 17},
+		Tagged: "z",
 	}
 	if !reflect.DeepEqual(&ts1, want) {
 		t.Errorf("got %+v, want %+v", pretty.Value(ts1), pretty.Value(*want))
@@ -586,12 +672,26 @@ func TestStructLoader(t *testing.T) {
 	if !reflect.DeepEqual(&np, want2) {
 		t.Errorf("got %+v, want %+v", pretty.Value(np), pretty.Value(*want2))
 	}
+
+	// Existing values should be reused.
+	nst := &nested{NestS: "x", NestI: -10}
+	np = nestedPtr{Nested: nst}
+	if err := load(&np, schema2, testValues); err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(&np, want2) {
+		t.Errorf("got %+v, want %+v", pretty.Value(np), pretty.Value(*want2))
+	}
+	if np.Nested != nst {
+		t.Error("nested struct pointers not equal")
+	}
 }
 
 type repStruct struct {
 	Nums      []int
 	ShortNums [2]int // to test truncation
 	LongNums  [5]int // to test padding with zeroes
+	Nested    []*nested
 }
 
 var (
@@ -599,10 +699,18 @@ var (
 		{Name: "nums", Type: IntegerFieldType, Repeated: true},
 		{Name: "shortNums", Type: IntegerFieldType, Repeated: true},
 		{Name: "longNums", Type: IntegerFieldType, Repeated: true},
+		{Name: "nested", Type: RecordFieldType, Repeated: true, Schema: Schema{
+			{Name: "nestS", Type: StringFieldType},
+			{Name: "nestI", Type: IntegerFieldType},
+		}},
 	}
-
 	v123      = []Value{int64(1), int64(2), int64(3)}
-	repValues = []Value{v123, v123, v123}
+	repValues = []Value{v123, v123, v123,
+		[]Value{
+			[]Value{"x", int64(1)},
+			[]Value{"y", int64(2)},
+		},
+	}
 )
 
 func TestStructLoaderRepeated(t *testing.T) {
@@ -614,6 +722,7 @@ func TestStructLoaderRepeated(t *testing.T) {
 		Nums:      []int{1, 2, 3},
 		ShortNums: [...]int{1, 2}, // extra values discarded
 		LongNums:  [...]int{1, 2, 3, 0, 0},
+		Nested:    []*nested{{"x", 1}, {"y", 2}},
 	}
 	if !reflect.DeepEqual(r1, want) {
 		t.Errorf("got %+v, want %+v", pretty.Value(r1), pretty.Value(want))

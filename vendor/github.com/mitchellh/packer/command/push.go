@@ -42,14 +42,14 @@ func (c *PushCommand) Run(args []string) int {
 	var name string
 	var create bool
 
-	flags := c.Meta.FlagSet("push", FlagSetVars)
-	flags.Usage = func() { c.Ui.Error(c.Help()) }
-	flags.StringVar(&token, "token", "", "token")
-	flags.StringVar(&message, "m", "", "message")
-	flags.StringVar(&message, "message", "", "message")
-	flags.StringVar(&name, "name", "", "name")
-	flags.BoolVar(&create, "create", false, "create (deprecated)")
-	if err := flags.Parse(args); err != nil {
+	f := c.Meta.FlagSet("push", FlagSetVars)
+	f.Usage = func() { c.Ui.Error(c.Help()) }
+	f.StringVar(&token, "token", "", "token")
+	f.StringVar(&message, "m", "", "message")
+	f.StringVar(&message, "message", "", "message")
+	f.StringVar(&name, "name", "", "name")
+	f.BoolVar(&create, "create", false, "create (deprecated)")
+	if err := f.Parse(args); err != nil {
 		return 1
 	}
 
@@ -57,9 +57,9 @@ func (c *PushCommand) Run(args []string) int {
 		c.Ui.Say("[DEPRECATED] -m/-message is deprecated and will be removed in a future Packer release")
 	}
 
-	args = flags.Args()
+	args = f.Args()
 	if len(args) != 1 {
-		flags.Usage()
+		f.Usage()
 		return 1
 	}
 
@@ -187,9 +187,6 @@ func (c *PushCommand) Run(args []string) int {
 
 		uploadOpts.Builds[b.Name] = info
 	}
-
-	// Collect the variables from CLI args and any var files
-	uploadOpts.Vars = core.Context().UserVariables
 
 	// Add the upload metadata
 	metadata := make(map[string]interface{})
@@ -323,17 +320,6 @@ func (c *PushCommand) upload(
 		Name:   bc.Name,
 		Builds: make([]atlas.BuildConfigBuild, 0, len(opts.Builds)),
 	}
-
-	// Build the BuildVars struct
-
-	buildVars := atlas.BuildVars{}
-	for k, v := range opts.Vars {
-		buildVars = append(buildVars, atlas.BuildVar{
-			Key:   k,
-			Value: v,
-		})
-	}
-
 	for name, info := range opts.Builds {
 		version.Builds = append(version.Builds, atlas.BuildConfigBuild{
 			Name:     name,
@@ -345,7 +331,7 @@ func (c *PushCommand) upload(
 	// Start the upload
 	doneCh, errCh := make(chan struct{}), make(chan error)
 	go func() {
-		err := c.client.UploadBuildConfigVersion(&version, opts.Metadata, buildVars, r, r.Size)
+		err := c.client.UploadBuildConfigVersion(&version, opts.Metadata, r, r.Size)
 		if err != nil {
 			errCh <- err
 			return
@@ -362,7 +348,6 @@ type uploadOpts struct {
 	Slug     string
 	Builds   map[string]*uploadBuildInfo
 	Metadata map[string]interface{}
-	Vars     map[string]string
 }
 
 type uploadBuildInfo struct {

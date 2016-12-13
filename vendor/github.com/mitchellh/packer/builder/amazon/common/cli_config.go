@@ -61,11 +61,7 @@ func (c *CLIConfig) CredentialsFromProfile(conf *aws.Config) (*credentials.Crede
 		return c.SourceCredentials, nil
 	}
 	srcCfg := aws.NewConfig().Copy(conf).WithCredentials(c.SourceCredentials)
-	session, err := session.NewSession(srcCfg)
-	if err != nil {
-		return nil, err
-	}
-	svc := sts.New(session)
+	svc := sts.New(session.New(), srcCfg)
 	res, err := svc.AssumeRole(c.AssumeRoleInput)
 	if err != nil {
 		return nil, err

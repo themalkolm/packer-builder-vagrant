@@ -1,13 +1,13 @@
-hash: d197fa14fe7ad77330b1c3c0db8f439311bd7709e0344a4a764595b70272c4e0
-updated: 2016-12-06T00:26:21.370719434+01:00
+hash: 51c74fe1a9888c54df2604b2493962ca5260ecce080962e626e2959f07b87d63
+updated: 2016-12-13T22:12:40.439643789+01:00
 imports:
 - name: cloud.google.com/go
-  version: ce0b01771fa3c494008bf2fb82d35833f081addc
+  version: aec0e559d3d92ccdd9729d28f44b72d083946620
   subpackages:
   - compute/metadata
   - internal
 - name: github.com/aws/aws-sdk-go
-  version: 173fcf0a78d6bc6c1668a416cdef0032c2a0efab
+  version: d5fd6983e17a1644149fb634fdcf69bd03cb8b21
   subpackages:
   - aws
   - aws/awserr
@@ -42,7 +42,7 @@ imports:
   - service/s3/s3manager
   - service/sts
 - name: github.com/Azure/azure-sdk-for-go
-  version: 0984e0641ae43b89283223034574d6465be93bf4
+  version: 2fb0ef4b4d3b33660c83a2af484510425f5c133b
   subpackages:
   - arm/compute
   - arm/network
@@ -51,7 +51,7 @@ imports:
   - arm/storage
   - storage
 - name: github.com/Azure/go-autorest
-  version: e0c77ecbe74311e03f2a629834d2110f031f1453
+  version: 32cc2321122a649b7ba4e323527bcb145134fd47
   subpackages:
   - autorest
   - autorest/azure
@@ -149,12 +149,11 @@ imports:
 - name: github.com/mitchellh/multistep
   version: 162146fc57112954184d90266f4733e900ed05a5
 - name: github.com/mitchellh/packer
-  version: e2fa87a402d9677257e2fbf1b4541b74db6abe63
+  version: 59efd2b81202611ef29c8b44734c52ac68ff906f
   subpackages:
   - builder/amazon/chroot
   - builder/amazon/common
   - builder/amazon/ebs
-  - builder/amazon/ebsvolume
   - builder/amazon/instance
   - builder/azure/arm
   - builder/azure/common
@@ -164,7 +163,6 @@ imports:
   - builder/azure/common/template
   - builder/azure/pkcs12
   - builder/azure/pkcs12/rc2
-  - builder/cloudstack
   - builder/digitalocean
   - builder/docker
   - builder/file
@@ -174,7 +172,6 @@ imports:
   - builder/parallels/common
   - builder/parallels/iso
   - builder/parallels/pvm
-  - builder/profitbricks
   - builder/qemu
   - builder/virtualbox/common
   - builder/virtualbox/iso
@@ -239,7 +236,7 @@ imports:
   subpackages:
   - winrmcp
 - name: github.com/pierrec/lz4
-  version: ed384a0ef355ee01915875486e8c245ebd567527
+  version: 5c9560bfa9ace2bf86080bf40d46b34ae44604df
 - name: github.com/pierrec/xxHash
   version: 5a004441f897722c627870a981d02b29924215fa
   subpackages:
@@ -248,8 +245,6 @@ imports:
   version: 839d9e913e063e28dfd0e6c7b7512793e0a48be9
 - name: github.com/pkg/sftp
   version: 4d0e916071f68db74f8a73926335f809396d6b42
-- name: github.com/profitbricks/profitbricks-sdk-go
-  version: 4765c76b6cb18b03649f2fa84cd5a83efcccb777
 - name: github.com/rackspace/gophercloud
   version: e00690e87603abe613e9f02c816c7c4bef82e063
   subpackages:
@@ -275,10 +270,6 @@ imports:
   version: 9c7f9b7a2bc3a520f7c7b30b34b7f85f47fe27b6
   subpackages:
   - codec
-- name: github.com/xanzy/go-cloudstack
-  version: deca6e17c056012b540aa2d2eae3ea1e63203b85
-  subpackages:
-  - cloudstack
 - name: golang.org/x/crypto
   version: ca7e7f10cb9fd9c1a6ff7f60436c086d73714180
   subpackages:
@@ -289,7 +280,7 @@ imports:
   - ssh
   - ssh/agent
 - name: golang.org/x/net
-  version: 6cdc0daab091c43fc46193327e0047b4f883c613
+  version: cfae461cedfdcab6e261a26eb77db53695623303
   repo: https://github.com/golang/net.git
   vcs: git
   subpackages:
@@ -305,14 +296,14 @@ imports:
   - lex/httplex
   - trace
 - name: golang.org/x/oauth2
-  version: f6093e37b6cb4092101a298aba5d794eb570757f
+  version: 96382aa079b72d8c014eb0c50f6c223d1e6a2de0
   subpackages:
   - google
   - internal
   - jws
   - jwt
 - name: google.golang.org/api
-  version: 793872d1e17c62c1e2e4e305cac963158acb8624
+  version: 6ae94d3fbc17a6600999dc24c28bd01735a87b76
   subpackages:
   - compute/v1
   - gensupport
@@ -331,7 +322,7 @@ imports:
   - internal/urlfetch
   - urlfetch
 - name: google.golang.org/grpc
-  version: 708a7f9f3283aa2d4f6132d287d78683babe55c8
+  version: 8712952b7d646dbbbc6fb73a782174f3115060f3
   subpackages:
   - codes
   - credentials

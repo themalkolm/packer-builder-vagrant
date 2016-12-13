@@ -19,6 +19,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"regexp"
 	"time"
 
 	"cloud.google.com/go/civil"
@@ -27,10 +28,28 @@ import (
 	bq "google.golang.org/api/bigquery/v2"
 )
 
-// See https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#timestamp-type.
-var timestampFormat = "2006-01-02 15:04:05.999999-07:00"
+var (
+	// See https://cloud.google.com/bigquery/docs/reference/standard-sql/data-types#timestamp-type.
+	timestampFormat = "2006-01-02 15:04:05.999999-07:00"
 
-var fieldCache = fields.NewCache(nil)
+	// See https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#schema.fields.name
+	validFieldName = regexp.MustCompile("^[a-zA-Z_][a-zA-Z0-9_]{0,127}$")
+)
+
+func bqTagParser(t reflect.StructTag) (name string, keep bool, other interface{}, err error) {
+	if s := t.Get("bigquery"); s != "" {
+		if s == "-" {
+			return "", false, nil, nil
+		}
+		if !validFieldName.MatchString(s) {
+			return "", false, nil, errInvalidFieldName
+		}
+		return s, true, nil, nil
+	}
+	return "", true, nil, nil
+}
+
+var fieldCache = fields.NewCache(bqTagParser, nil)
 
 var (
 	int64ParamType     = &bq.QueryParameterType{Type: "INT64"}
@@ -137,7 +156,11 @@ func paramType(t reflect.Type) (*bq.QueryParameterType, error) {
 
 	case reflect.Struct:
 		var fts []*bq.QueryParameterTypeStructTypes
-		for _, f := range fieldCache.Fields(t) {
+		fields, err := fieldCache.Fields(t)
+		if err != nil {
+			return nil, err
+		}
+		for _, f := range fields {
 			pt, err := paramType(f.Type)
 			if err != nil {
 				return nil, err
@@ -209,7 +232,10 @@ func paramValue(v reflect.Value) (bq.QueryParameterValue, error) {
 		fallthrough
 
 	case reflect.Struct:
-		fields := fieldCache.Fields(t)
+		fields, err := fieldCache.Fields(t)
+		if err != nil {
+			return bq.QueryParameterValue{}, err
+		}
 		res.StructValues = map[string]bq.QueryParameterValue{}
 		for _, f := range fields {
 			fv := v.FieldByIndex(f.Index)

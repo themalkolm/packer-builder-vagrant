@@ -74,7 +74,7 @@ func TestDispatchHook_cancel(t *testing.T) {
 
 	dh := &DispatchHook{
 		Mapping: map[string][]Hook{
-			"foo": {hook},
+			"foo": []Hook{hook},
 		},
 	}
 

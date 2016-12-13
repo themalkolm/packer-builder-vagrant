@@ -30,6 +30,9 @@
         "ap-southeast-2": {
           "description": "Asia Pacific (Sydney)"
         },
+        "ca-central-1": {
+          "description": "Canada (Central)"
+        },
         "eu-central-1": {
           "description": "EU (Frankfurt)"
         },
@@ -60,6 +63,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -79,6 +83,7 @@
             "eu-west-1": {},
             "us-east-1": {},
             "us-east-2": {},
+            "us-west-1": {},
             "us-west-2": {}
           }
         },
@@ -99,6 +104,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -143,6 +149,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -171,6 +178,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -201,6 +209,7 @@
             "ap-northeast-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "us-east-1": {},
@@ -230,6 +239,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -261,6 +271,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -318,6 +329,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -368,6 +380,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -389,6 +402,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -422,6 +436,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "local": {
@@ -453,6 +468,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -467,6 +483,7 @@
             "ap-northeast-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "us-east-1": {},
@@ -480,6 +497,7 @@
             "ap-northeast-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "us-east-1": {},
@@ -495,6 +513,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -511,6 +530,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -541,6 +561,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -564,6 +585,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {
               "sslCommonName": "{service}.{region}.{dnsSuffix}"
             },
@@ -638,7 +660,12 @@
         "gamelift": {
           "endpoints": {
             "ap-northeast-1": {},
+            "ap-northeast-2": {},
+            "ap-south-1": {},
+            "ap-southeast-1": {},
+            "eu-central-1": {},
             "eu-west-1": {},
+            "sa-east-1": {},
             "us-east-1": {},
             "us-west-2": {}
           }
@@ -655,6 +682,7 @@
             "ap-northeast-2": {},
             "ap-south-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "us-east-1": {},
@@ -732,6 +760,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -755,6 +784,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -790,6 +820,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -834,6 +865,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -891,6 +923,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -909,6 +942,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -976,6 +1010,7 @@
                 "s3v4"
               ]
             },
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {
               "hostname": "s3-eu-west-1.amazonaws.com",
@@ -1085,6 +1120,7 @@
           "endpoints": {
             "ap-south-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "us-east-1": {},
@@ -1106,6 +1142,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -1129,6 +1166,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -1169,6 +1207,7 @@
             "ap-northeast-2": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -1185,6 +1224,8 @@
             },
             "protocols": [
               "http",
+              "http",
+              "https",
               "https"
             ]
           },
@@ -1194,8 +1235,18 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
+            "local": {
+              "credentialScope": {
+                "region": "us-east-1"
+              },
+              "hostname": "localhost:8000",
+              "protocols": [
+                "http"
+              ]
+            },
             "sa-east-1": {},
             "us-east-1": {},
             "us-east-2": {},
@@ -1222,6 +1273,7 @@
             "ap-southeast-1": {},
             "ap-southeast-2": {},
             "aws-global": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -1244,6 +1296,7 @@
             "ap-south-1": {},
             "ap-southeast-1": {},
             "ap-southeast-2": {},
+            "ca-central-1": {},
             "eu-central-1": {},
             "eu-west-1": {},
             "sa-east-1": {},
@@ -1264,6 +1317,14 @@
           },
           "isRegionalized": false,
           "partitionEndpoint": "aws-global"
+        },
+        "waf-regional": {
+          "endpoints": {
+            "ap-northeast-1": {},
+            "eu-west-1": {},
+            "us-east-1": {},
+            "us-west-2": {}
+          }
         },
         "workspaces": {
           "endpoints": {
@@ -1507,6 +1568,8 @@
             },
             "protocols": [
               "http",
+              "http",
+              "https",
               "https"
             ]
           },

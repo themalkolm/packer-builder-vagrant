@@ -45,20 +45,24 @@ func (s *StepRunSourceInstance) Run(state multistep.StateBag) multistep.StepActi
 
 	securityGroupIds := make([]*string, len(tempSecurityGroupIds))
 	for i, sg := range tempSecurityGroupIds {
-		log.Printf("[DEBUG] Waiting for tempSecurityGroup: %s", sg)
-		err := WaitUntilSecurityGroupExists(ec2conn,
-			&ec2.DescribeSecurityGroupsInput{
+		found := false
+		for i := 0; i < 5; i++ {
+			time.Sleep(time.Duration(i) * 5 * time.Second)
+			log.Printf("[DEBUG] Describing tempSecurityGroup to ensure it is available: %s", sg)
+			_, err := ec2conn.DescribeSecurityGroups(&ec2.DescribeSecurityGroupsInput{
 				GroupIds: []*string{aws.String(sg)},
-			},
-		)
-		if err == nil {
-			log.Printf("[DEBUG] Found security group %s", sg)
+			})
+			if err == nil {
+				log.Printf("[DEBUG] Found security group %s", sg)
+				found = true
+				break
+			}
+			log.Printf("[DEBUG] Error in querying security group %s", err)
+		}
+		if found {
 			securityGroupIds[i] = aws.String(sg)
 		} else {
-			err := fmt.Errorf("Timed out waiting for security group %s", sg)
-			log.Printf("[DEBUG] %s", err.Error())
-			state.Put("error", err)
-			return multistep.ActionHalt
+			state.Put("error", fmt.Errorf("Timeout waiting for security group %s to become available", sg))
 		}
 	}
 
@@ -80,18 +84,24 @@ func (s *StepRunSourceInstance) Run(state multistep.StateBag) multistep.StepActi
 	}
 
 	ui.Say("Launching a source AWS instance...")
-	image, ok := state.Get("source_image").(*ec2.Image)
-	if !ok {
-		state.Put("error", fmt.Errorf("source_image type assertion failed"))
+	imageResp, err := ec2conn.DescribeImages(&ec2.DescribeImagesInput{
+		ImageIds: []*string{&s.SourceAMI},
+	})
+	if err != nil {
+		state.Put("error", fmt.Errorf("There was a problem with the source AMI: %s", err))
 		return multistep.ActionHalt
 	}
-	s.SourceAMI = *image.ImageId
 
-	if s.ExpectedRootDevice != "" && *image.RootDeviceType != s.ExpectedRootDevice {
+	if len(imageResp.Images) != 1 {
+		state.Put("error", fmt.Errorf("The source AMI '%s' could not be found.", s.SourceAMI))
+		return multistep.ActionHalt
+	}
+
+	if s.ExpectedRootDevice != "" && *imageResp.Images[0].RootDeviceType != s.ExpectedRootDevice {
 		state.Put("error", fmt.Errorf(
 			"The provided source AMI has an invalid root device type.\n"+
 				"Expected '%s', got '%s'.",
-			s.ExpectedRootDevice, *image.RootDeviceType))
+			s.ExpectedRootDevice, *imageResp.Images[0].RootDeviceType))
 		return multistep.ActionHalt
 	}
 
@@ -167,7 +177,7 @@ func (s *StepRunSourceInstance) Run(state multistep.StateBag) multistep.StepActi
 
 		if s.SubnetId != "" && s.AssociatePublicIpAddress {
 			runOpts.NetworkInterfaces = []*ec2.InstanceNetworkInterfaceSpecification{
-				{
+				&ec2.InstanceNetworkInterfaceSpecification{
 					DeviceIndex:              aws.Int64(0),
 					AssociatePublicIpAddress: &s.AssociatePublicIpAddress,
 					SubnetId:                 &s.SubnetId,
@@ -203,7 +213,7 @@ func (s *StepRunSourceInstance) Run(state multistep.StateBag) multistep.StepActi
 			UserData:           &userData,
 			IamInstanceProfile: &ec2.IamInstanceProfileSpecification{Name: &s.IamInstanceProfile},
 			NetworkInterfaces: []*ec2.InstanceNetworkInterfaceSpecification{
-				{
+				&ec2.InstanceNetworkInterfaceSpecification{
 					DeviceIndex:              aws.Int64(0),
 					AssociatePublicIpAddress: &s.AssociatePublicIpAddress,
 					SubnetId:                 &s.SubnetId,
@@ -358,17 +368,4 @@ func (s *StepRunSourceInstance) Cleanup(state multistep.StateBag) {
 
 		WaitForState(&stateChange)
 	}
-}
-
-func WaitUntilSecurityGroupExists(c *ec2.EC2, input *ec2.DescribeSecurityGroupsInput) error {
-	for i := 0; i < 40; i++ {
-		_, err := c.DescribeSecurityGroups(input)
-		if err != nil {
-			log.Printf("[DEBUG] Error querying security group %v: %s", input.GroupIds, err)
-			time.Sleep(15 * time.Second)
-			continue
-		}
-		return nil
-	}
-	return fmt.Errorf("timed out")
 }

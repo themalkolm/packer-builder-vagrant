@@ -353,7 +353,7 @@ func fsDirectoryCache(rootDirectory fs.Directory) directoryCache {
 			// directory not cached, so start at the root and walk each component
 			// creating them if they're not in cache
 			var entry fs.Directory
-			for i := range component {
+			for i, _ := range component {
 
 				// join all of our components into a key
 				path := strings.Join(component[:i], "/")

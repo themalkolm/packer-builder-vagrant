@@ -347,7 +347,7 @@ func (d *driverGCE) RunInstance(c *InstanceConfig) (<-chan error, error) {
 	instance := compute.Instance{
 		Description: c.Description,
 		Disks: []*compute.AttachedDisk{
-			{
+			&compute.AttachedDisk{
 				Type:       "PERSISTENT",
 				Mode:       "READ_WRITE",
 				Kind:       "compute#attachedDisk",
@@ -366,7 +366,7 @@ func (d *driverGCE) RunInstance(c *InstanceConfig) (<-chan error, error) {
 		},
 		Name: c.Name,
 		NetworkInterfaces: []*compute.NetworkInterface{
-			{
+			&compute.NetworkInterface{
 				AccessConfigs: []*compute.AccessConfig{accessconfig},
 				Network:       network.SelfLink,
 				Subnetwork:    subnetworkSelfLink,
@@ -376,9 +376,13 @@ func (d *driverGCE) RunInstance(c *InstanceConfig) (<-chan error, error) {
 			Preemptible: c.Preemptible,
 		},
 		ServiceAccounts: []*compute.ServiceAccount{
-			{
-				Email:  c.ServiceAccountEmail,
-				Scopes: c.Scopes,
+			&compute.ServiceAccount{
+				Email: c.ServiceAccountEmail,
+				Scopes: []string{
+					"https://www.googleapis.com/auth/userinfo.email",
+					"https://www.googleapis.com/auth/compute",
+					"https://www.googleapis.com/auth/devstorage.full_control",
+				},
 			},
 		},
 		Tags: &compute.Tags{

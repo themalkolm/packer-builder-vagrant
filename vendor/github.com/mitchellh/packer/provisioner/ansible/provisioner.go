@@ -184,11 +184,13 @@ func (p *Provisioner) Provision(ui packer.Ui, comm packer.Communicator) error {
 	keyChecker := ssh.CertChecker{
 		UserKeyFallback: func(conn ssh.ConnMetadata, pubKey ssh.PublicKey) (*ssh.Permissions, error) {
 			if user := conn.User(); user != p.config.User {
-				return nil, errors.New(fmt.Sprintf("authentication failed: %s is not a valid user", user))
+				ui.Say(fmt.Sprintf("%s is not a valid user", user))
+				return nil, errors.New("authentication failed")
 			}
 
 			if !bytes.Equal(k.Marshal(), pubKey.Marshal()) {
-				return nil, errors.New("authentication failed: unauthorized key")
+				ui.Say("unauthorized key")
+				return nil, errors.New("authentication failed")
 			}
 
 			return nil, nil
@@ -197,7 +199,7 @@ func (p *Provisioner) Provision(ui packer.Ui, comm packer.Communicator) error {
 
 	config := &ssh.ServerConfig{
 		AuthLogCallback: func(conn ssh.ConnMetadata, method string, err error) {
-			log.Printf("authentication attempt from %s to %s as %s using %s", conn.RemoteAddr(), conn.LocalAddr(), conn.User(), method)
+			ui.Say(fmt.Sprintf("authentication attempt from %s to %s as %s using %s", conn.RemoteAddr(), conn.LocalAddr(), conn.User(), method))
 		},
 		PublicKeyCallback: keyChecker.Authenticate,
 		//NoClientAuth:      true,
@@ -240,7 +242,7 @@ func (p *Provisioner) Provision(ui packer.Ui, comm packer.Communicator) error {
 	p.adapter = newAdapter(p.done, localListener, config, p.config.SFTPCmd, ui, comm)
 
 	defer func() {
-		log.Print("shutting down the SSH proxy")
+		ui.Say("shutting down the SSH proxy")
 		close(p.done)
 		p.adapter.Shutdown()
 	}()
@@ -353,7 +355,7 @@ func (p *Provisioner) executeAnsible(ui packer.Ui, comm packer.Communicator, pri
 	go repeat(stdout)
 	go repeat(stderr)
 
-	log.Printf("Executing Ansible: %s", strings.Join(cmd.Args, " "))
+	ui.Say(fmt.Sprintf("Executing Ansible: %s", strings.Join(cmd.Args, " ")))
 	cmd.Start()
 	wg.Wait()
 	err = cmd.Wait()

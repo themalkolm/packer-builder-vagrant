@@ -274,7 +274,14 @@ func (a *API) APIGoCode() string {
 }
 
 // A tplService defines the template for the service generated code.
-var tplService = template.Must(template.New("service").Parse(`
+var tplService = template.Must(template.New("service").Funcs(template.FuncMap{
+	"ServiceNameValue": func(a *API) string {
+		if a.NoConstServiceNames {
+			return fmt.Sprintf("%q", a.Metadata.EndpointPrefix)
+		}
+		return "ServiceName"
+	},
+}).Parse(`
 {{ .Documentation }}//The service client's operations are safe to be used concurrently.
 // It is not safe to mutate any of the client's properties though.
 type {{ .StructName }} struct {
@@ -289,14 +296,10 @@ var initRequest func(*request.Request)
 {{ end }}
 
 {{ if not .NoConstServiceNames }}
-// A ServiceName is the name of the service the client will make API calls to.
-const ServiceName = "{{ .Metadata.EndpointPrefix }}"
+	// A ServiceName is the name of the service the client will make API calls to.
+	const ServiceName = "{{ .Metadata.EndpointPrefix }}"
 {{ end }}
-
-{{ $serviceName := "ServiceName" }}
-{{ if not .NoConstServiceNames }}
-	{{ $serviceName :=  printf "%q" .Metadata.EndpointPrefix }}
-{{ end }}
+{{ $serviceName := ServiceNameValue . -}}
 
 // New creates a new instance of the {{ .StructName }} client with a session.
 // If additional configuration is needed for the client instance use the optional
@@ -399,20 +402,29 @@ func (a *API) ServiceGoCode() string {
 // ExampleGoCode renders service example code. Returning it as a string.
 func (a *API) ExampleGoCode() string {
 	exs := []string{}
+	imports := map[string]bool{}
 	for _, o := range a.OperationList() {
+		o.imports = map[string]bool{}
 		exs = append(exs, o.Example())
+		for k, v := range o.imports {
+			imports[k] = v
+		}
 	}
 
-	code := fmt.Sprintf("import (\n%q\n%q\n%q\n\n%q\n%q\n%q\n)\n\n"+
-		"var _ time.Duration\nvar _ bytes.Buffer\n\n%s",
+	code := fmt.Sprintf("import (\n%q\n%q\n%q\n\n%q\n%q\n%q\n",
 		"bytes",
 		"fmt",
 		"time",
 		"github.com/aws/aws-sdk-go/aws",
 		"github.com/aws/aws-sdk-go/aws/session",
 		path.Join(a.SvcClientImportPath, a.PackageName()),
-		strings.Join(exs, "\n\n"),
 	)
+	for k, _ := range imports {
+		code += fmt.Sprintf("%q\n", k)
+	}
+	code += ")\n\n"
+	code += "var _ time.Duration\nvar _ bytes.Buffer\n\n"
+	code += strings.Join(exs, "\n\n")
 	return code
 }
 
