@@ -4,7 +4,7 @@ Builder proxy. It finds the corresponding vagrant box in the local vagrant cache
 forwards the actual building the to corresponding builder.
 
 **WARNING** It essentially compiles **whole** packer code to allow us to configure any
-builder plugin.
+builder plugin. This means you need to match packer version **exactly**.
 
 Brief
 -----
