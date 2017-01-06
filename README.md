@@ -1,7 +1,7 @@
 # packer-builder-vagrant [![Build Status](https://travis-ci.org/themalkolm/packer-builder-vagrant.svg?branch=master)](https://travis-ci.org/themalkolm/packer-builder-vagrant)
 
-Builder proxy. It finds the corresponding vagrant box in the local vagrant cache and
-forwards the actual building the to corresponding builder.
+Proxy builder. It fetches vagrant box (if it is not yet fetched) and forwards the actual building the to
+corresponding builder.
 
 **WARNING** It essentially compiles in the **whole** packer to allow us to configure any
 builder plugin. This means you need to match packer version **exactly**.
@@ -113,7 +113,7 @@ All configuration properties are **required**, except where noted.
 
 ### box_name
 
-The name of the box to find.
+The name of the box to use.
 
 ### box_version (optional)
 
