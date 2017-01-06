@@ -1,6 +1,7 @@
 {
   "variables": {
     "box_name": null,
+    "box_version": null,
     "box_file": null
   },
   "builders": [
@@ -9,7 +10,7 @@
 
       "box_name": "{{user `box_name`}}",
       "box_provider": "virtualbox",
-      "box_version": "2.3.1",
+      "box_version": "{{user `box_version`}}",
       "box_file": ".ovf",
 
       "builder": {

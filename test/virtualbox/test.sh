@@ -1,6 +1,7 @@
 #!/bin/bash -xe
 
 BOX_NAME="bento/centos-7.2"
+BOX_VERSION="2.3.1"
 BOX_NAME_42="bento42/centos-7.2"
 BOX_FILE="bento-VAGRANTSLASH-centos-7.2-virtualbox.box"
 
@@ -44,6 +45,7 @@ setup
 #
 packer build \
     -var "box_name=${BOX_NAME}" \
+    -var "box_version=${BOX_VERSION}" \
     -var "box_file=${BOX_FILE}" \
     template.json
 vagrant box add --force --name ${BOX_NAME_42} ${BOX_FILE}
