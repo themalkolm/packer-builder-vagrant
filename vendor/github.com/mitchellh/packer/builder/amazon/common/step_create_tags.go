@@ -40,13 +40,7 @@ func (s *StepCreateTags) Run(state multistep.StateBag) multistep.StepAction {
 				Credentials: ec2conn.Config.Credentials,
 				Region:      aws.String(region),
 			}
-			session, err := session.NewSession(&awsConfig)
-			if err != nil {
-				err := fmt.Errorf("Error creating AWS session: %s", err)
-				state.Put("error", err)
-				ui.Error(err.Error())
-				return multistep.ActionHalt
-			}
+			session := session.New(&awsConfig)
 
 			regionconn := ec2.New(session)
 

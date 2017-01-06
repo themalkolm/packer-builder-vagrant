@@ -60,9 +60,9 @@ func (t *Table) Uploader() *Uploader {
 //
 // If src is ValueSaver, then its Save method is called to produce a row for uploading.
 //
-// If src is a struct or pointer to a struct, then its exported fields are used
-// to produce a row for uploading. The table's schema field names must match
-// the struct field names case-insensitively.
+// If src is a struct or pointer to a struct, then a schema is inferred from it
+// and used to create a StructSaver. The InsertID of the StructSaver will be
+// empty.
 //
 // If src is a slice of ValueSavers, structs, or struct pointers, then each
 // element of the slice is treated as above, and multiple rows are uploaded.
@@ -70,33 +70,63 @@ func (t *Table) Uploader() *Uploader {
 // Put returns a PutMultiError if one or more rows failed to be uploaded.
 // The PutMultiError contains a RowInsertionError for each failed row.
 func (u *Uploader) Put(ctx context.Context, src interface{}) error {
-	if saver, ok := src.(ValueSaver); ok {
-		return u.putMulti(ctx, []ValueSaver{saver})
-	}
-	srcVal := reflect.ValueOf(src)
-	if isStructOrStructPointer(srcVal) {
-		return u.putMulti(ctx, []ValueSaver{structSaver{srcVal}})
-	}
-	if srcVal.Kind() != reflect.Slice {
-		return fmt.Errorf("%T is not a ValueSaver, struct, struct pointer, or slice", src)
-	}
-	var savers []ValueSaver
-	for i := 0; i < srcVal.Len(); i++ {
-		vi := srcVal.Index(i)
-		s := vi.Interface()
-		if saver, ok := s.(ValueSaver); ok {
-			savers = append(savers, saver)
-		} else if isStructOrStructPointer(vi) {
-			savers = append(savers, structSaver{vi})
-		} else {
-			return fmt.Errorf("element %d of src is of type %T, which is not a ValueSaver, struct, or struct pointer", i, s)
-		}
+	savers, err := valueSavers(src)
+	if err != nil {
+		return err
 	}
 	return u.putMulti(ctx, savers)
 }
 
-func isStructOrStructPointer(v reflect.Value) bool {
-	return v.Kind() == reflect.Struct || (v.Kind() == reflect.Ptr && v.Elem().Kind() == reflect.Struct)
+func valueSavers(src interface{}) ([]ValueSaver, error) {
+	saver, ok, err := toValueSaver(src)
+	if err != nil {
+		return nil, err
+	}
+	if ok {
+		return []ValueSaver{saver}, nil
+	}
+	srcVal := reflect.ValueOf(src)
+	if srcVal.Kind() != reflect.Slice {
+		return nil, fmt.Errorf("%T is not a ValueSaver, struct, struct pointer, or slice", src)
+
+	}
+	var savers []ValueSaver
+	for i := 0; i < srcVal.Len(); i++ {
+		s := srcVal.Index(i).Interface()
+		saver, ok, err := toValueSaver(s)
+		if err != nil {
+			return nil, err
+		}
+		if !ok {
+			return nil, fmt.Errorf("src[%d] has type %T, which is not a ValueSaver, struct or struct pointer", i, s)
+		}
+		savers = append(savers, saver)
+	}
+	return savers, nil
+}
+
+// Make a ValueSaver from x, which must implement ValueSaver already
+// or be a struct or pointer to struct.
+func toValueSaver(x interface{}) (ValueSaver, bool, error) {
+	if saver, ok := x.(ValueSaver); ok {
+		return saver, ok, nil
+	}
+	v := reflect.ValueOf(x)
+	// Support Put with []interface{}
+	if v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	if v.Kind() != reflect.Struct {
+		return nil, false, nil
+	}
+	schema, err := inferSchemaReflect(v.Type())
+	if err != nil {
+		return nil, false, err
+	}
+	return &StructSaver{Struct: x, Schema: schema}, true, nil
 }
 
 func (u *Uploader) putMulti(ctx context.Context, src []ValueSaver) error {

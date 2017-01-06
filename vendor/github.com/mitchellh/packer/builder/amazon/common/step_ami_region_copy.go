@@ -88,11 +88,8 @@ func amiRegionCopy(state multistep.StateBag, config *AccessConfig, name string, 
 	}
 	awsConfig.Region = aws.String(target)
 
-	session, err := session.NewSession(awsConfig)
-	if err != nil {
-		return "", err
-	}
-	regionconn := ec2.New(session)
+	sess := session.New(awsConfig)
+	regionconn := ec2.New(sess)
 
 	resp, err := regionconn.CopyImage(&ec2.CopyImageInput{
 		SourceRegion:  &source,

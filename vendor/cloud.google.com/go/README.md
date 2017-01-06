@@ -22,6 +22,46 @@ backwards-incompatible changes.
 
 ## News
 
+_December 12, 2016_
+
+Beta release of BigQuery, DataStore, Logging and Storage. See the
+[blog post](https://cloudplatform.googleblog.com/2016/12/announcing-new-google-cloud-client.html).
+
+Also, BigQuery now supports structs. Read a row directly into a struct with
+`RowIterator.Next`, and upload a row directly from a struct with `Uploader.Put`.
+You can also use field tags. See the [package documentation][cloud-bigquery-ref]
+for details.
+
+_December 5, 2016_
+
+More changes to BigQuery:
+
+* The `ValueList` type was removed. It is no longer necessary. Instead of
+   ```go
+   var v ValueList
+   ... it.Next(&v) ..
+   ```
+   use
+
+   ```go
+   var v []Value
+   ... it.Next(&v) ...
+   ```
+
+* Previously, repeatedly calling `RowIterator.Next` on the same `[]Value` or
+  `ValueList` would append to the slice. Now each call resets the size to zero first.
+
+* Schema inference will infer the SQL type BYTES for a struct field of
+  type []byte. Previously it inferred STRING.
+
+* The types `uint`, `uint64` and `uintptr` are no longer supported in schema
+  inference. BigQuery's integer type is INT64, and those types may hold values
+  that are not correctly represented in a 64-bit signed integer.
+
+* The SQL types DATE, TIME and DATETIME are now supported. They correspond to
+  the `Date`, `Time` and `DateTime` types in the new `cloud.google.com/go/civil`
+  package.
+
 _November 17, 2016_
 
 Change to BigQuery: values from INTEGER columns will now be returned as int64,
@@ -32,7 +72,7 @@ _November 8, 2016_
 New datastore feature: datastore now encodes your nested Go structs as Entity values,
 instead of a flattened list of the embedded struct's fields.
 This means that you may now have twice-nested slices, eg.
-```
+```go
 type State struct {
   Cities  []struct{
     Populations []int
@@ -106,194 +146,6 @@ Use `iterator.Done` instead, where `iterator` is the package
 `google.golang.org/api/iterator`.
 
 
-_October 19, 2016_
-
-Breaking changes to cloud.google.com/go/bigquery:
-
-* Client.Table and Client.OpenTable have been removed.
-    Replace
-    ```go
-    client.OpenTable("project", "dataset", "table")
-    ```
-    with
-    ```go
-    client.DatasetInProject("project", "dataset").Table("table")
-    ```
-
-* Client.CreateTable has been removed.
-    Replace
-    ```go
-    client.CreateTable(ctx, "project", "dataset", "table")
-    ```
-    with
-    ```go
-    client.DatasetInProject("project", "dataset").Table("table").Create(ctx)
-    ```
-    
-* Dataset.ListTables have been replaced with Dataset.Tables.
-    Replace
-    ```go
-    tables, err := ds.ListTables(ctx)
-    ```
-    with
-    ```go
-    it := ds.Tables(ctx)
-    for {
-        table, err := it.Next()
-        if err == iterator.Done {
-            break
-        }
-        if err != nil {
-            // TODO: Handle error.
-        }
-        // TODO: use table.
-    }
-    ```
-
-* Client.Read has been replaced with Job.Read, Table.Read and Query.Read. 
-    Replace
-    ```go
-    it, err := client.Read(ctx, job)
-    ```
-    with
-    ```go
-    it, err := job.Read(ctx)
-    ```
-  and similarly for reading from tables or queries.
-
-* The iterator returned from the Read methods is now named RowIterator. Its
-  behavior is closer to the other iterators in these libraries. It no longer
-  supports the Schema method; see the next item.
-    Replace
-    ```go
-    for it.Next(ctx) {
-        var vals ValueList
-        if err := it.Get(&vals); err != nil {
-            // TODO: Handle error.
-        }
-        // TODO: use vals.
-    }
-    if err := it.Err(); err != nil {
-        // TODO: Handle error.
-    }
-    ```
-    with
-    ```
-    for {
-        var vals ValueList
-        err := it.Next(&vals)
-        if err == iterator.Done {
-            break
-        }
-        if err != nil {
-            // TODO: Handle error.
-        }
-        // TODO: use vals.
-    }
-    ```
-    Instead of the `RecordsPerRequest(n)` option, write
-    ```go
-    it.PageInfo().MaxSize = n
-    ```
-    Instead of the `StartIndex(i)` option, write
-    ```go
-    it.StartIndex = i
-    ```
-
-* ValueLoader.Load now takes a Schema in addition to a slice of Values.
-    Replace
-    ```go
-    func (vl *myValueLoader) Load(v []bigquery.Value)
-    ```
-    with
-    ```go
-    func (vl *myValueLoader) Load(v []bigquery.Value, s bigquery.Schema)
-    ```
-
-
-* Table.Patch is replace by Table.Update.
-    Replace
-    ```go
-    p := table.Patch()
-    p.Description("new description")
-    metadata, err := p.Apply(ctx)
-    ```
-    with
-    ```go
-    metadata, err := table.Update(ctx, bigquery.TableMetadataToUpdate{
-        Description: "new description",
-    })
-    ```
-
-* Client.Copy is replaced by separate methods for each of its four functions.
-  All options have been replaced by struct fields.
-
-  * To load data from Google Cloud Storage into a table, use Table.LoaderFrom.
-
-    Replace
-    ```go
-    client.Copy(ctx, table, gcsRef)
-    ```
-    with
-    ```go
-    table.LoaderFrom(gcsRef).Run(ctx)
-    ```
-    Instead of passing options to Copy, set fields on the Loader:
-    ```go
-    loader := table.LoaderFrom(gcsRef)
-    loader.WriteDisposition = bigquery.WriteTruncate
-    ```
-
-  * To extract data from a table into Google Cloud Storage, use
-    Table.ExtractorTo. Set fields on the returned Extractor instead of
-    passing options.
-
-    Replace
-    ```go
-    client.Copy(ctx, gcsRef, table)
-    ```
-    with
-    ```go
-    table.ExtractorTo(gcsRef).Run(ctx)
-    ```
-
-  * To copy data into a table from one or more other tables, use
-    Table.CopierFrom. Set fields on the returned Copier instead of passing options.
-
-    Replace
-    ```go
-    client.Copy(ctx, dstTable, srcTable)
-    ```
-    with
-    ```go
-    dst.Table.CopierFrom(srcTable).Run(ctx)
-    ```
-
-  * To start a query job, create a Query and call its Run method. Set fields
-  on the query instead of passing options.
-
-    Replace
-    ```go
-    client.Copy(ctx, table, query)
-    ```
-    with
-    ```go
-    query.Run(ctx)
-    ```
-
-* Table.NewUploader has been renamed to Table.Uploader. Instead of options,
-  configure an Uploader by setting its fields.
-    Replace
-    ```go
-    u := table.NewUploader(bigquery.UploadIgnoreUnknownValues())
-    ```
-    with
-    ```go
-    u := table.NewUploader(bigquery.UploadIgnoreUnknownValues())
-    u.IgnoreUnknownValues = true
-    ```
-
-
 [Older news](https://github.com/GoogleCloudPlatform/google-cloud-go/blob/master/old-news.md)
 
 ## Supported APIs
@@ -302,16 +154,16 @@ Google API                     | Status       | Package
 -------------------------------|--------------|-----------------------------------------------------------
 [Datastore][cloud-datastore]   | beta         | [`cloud.google.com/go/datastore`][cloud-datastore-ref]
 [Storage][cloud-storage]       | beta         | [`cloud.google.com/go/storage`][cloud-storage-ref]
-[Pub/Sub][cloud-pubsub]        | experimental | [`cloud.google.com/go/pubsub`][cloud-pubsub-ref]
 [Bigtable][cloud-bigtable]     | beta         | [`cloud.google.com/go/bigtable`][cloud-bigtable-ref]
-[BigQuery][cloud-bigquery]     | experimental | [`cloud.google.com/go/bigquery`][cloud-bigquery-ref]
-[Logging][cloud-logging]       | experimental | [`cloud.google.com/go/logging`][cloud-logging-ref]
-[Vision][cloud-vision]         | experimental | [`cloud.google.com/go/vision`][cloud-vision-ref]
-[Language][cloud-language]     | experimental | [`cloud.google.com/go/language/apiv1beta1`][cloud-language-ref]
-[Speech][cloud-speech]         | experimental | [`cloud.google.com/go/speech/apiv1beta`][cloud-speech-ref]
+[BigQuery][cloud-bigquery]     | beta         | [`cloud.google.com/go/bigquery`][cloud-bigquery-ref]
+[Logging][cloud-logging]       | beta         | [`cloud.google.com/go/logging`][cloud-logging-ref]
+[Pub/Sub][cloud-pubsub]        | alpha | [`cloud.google.com/go/pubsub`][cloud-pubsub-ref]
+[Vision][cloud-vision]         | alpha | [`cloud.google.com/go/vision`][cloud-vision-ref]
+[Language][cloud-language]     | alpha | [`cloud.google.com/go/language/apiv1beta1`][cloud-language-ref]
+[Speech][cloud-speech]         | alpha | [`cloud.google.com/go/speech/apiv1beta`][cloud-speech-ref]
 
 
-> **Experimental status**: the API is still being actively developed. As a
+> **Alpha status**: the API is still being actively developed. As a
 > result, it might change in backward-incompatible ways and is not recommended
 > for production use.
 >
@@ -516,7 +368,7 @@ if err != nil {
 }
 // Iterate through the results.
 for {
-    var values bigquery.ValueList
+    var values []bigquery.Value
     err := it.Next(&values)
     if err == iterator.Done {
         break

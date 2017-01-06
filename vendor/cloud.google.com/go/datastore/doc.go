@@ -15,6 +15,8 @@
 /*
 Package datastore provides a client for Google Cloud Datastore.
 
+Note: This package is in beta.  Some backwards-incompatible changes may occur.
+
 
 Basic Operations
 
@@ -42,10 +44,7 @@ Valid value types are:
   - structs whose fields are all valid value types,
   - slices of any of the above.
 
-Slices of structs are valid, as are structs that contain slices. However, if
-one struct contains another, then at most one of those can be repeated. This
-disqualifies recursively defined struct types: any struct T that (directly or
-indirectly) contains a []T.
+Slices of structs are valid, as are structs that contain slices.
 
 The Get and Put functions load and save an entity's contents. An entity's
 contents are typically represented by a struct pointer.
@@ -152,6 +151,39 @@ Example code:
 		I int `datastore:"-"`
 		J int `datastore:",noindex" json:"j"`
 	}
+
+
+Key Field
+
+If the struct contains a *datastore.Key field tagged with the name "__key__",
+its value will be ignored on Put. When reading the Entity back into the Go struct,
+the field will be populated with the *datastore.Key value used to query for
+the Entity.
+
+Example code:
+
+	type MyEntity struct {
+		A int
+		K *datastore.Key `datastore:"__key__"`
+	}
+
+	k := datastore.NameKey("Entity", "stringID", nil)
+	e := MyEntity{A: 12}
+	k, err = dsClient.Put(ctx, k, e)
+	if err != nil {
+		// Handle error.
+	}
+
+	var entities []Entity
+	q := datastore.NewQuery("Entity").Filter("A =", 12).Limit(1)
+	_, err := datastore.GetAll(ctx, q, &entities)
+	if err != nil {
+		// Handle error
+	}
+
+	log.Println(entities[0])
+	// Prints {12 /Entity,stringID}
+
 
 
 Structured Properties

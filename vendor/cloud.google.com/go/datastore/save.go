@@ -117,13 +117,19 @@ func (s structPLS) key(v reflect.Value) (*Key, error) {
 		return nil, errors.New("datastore: cannot save key of non-struct type")
 	}
 
-	if s.codec.keyField == -1 {
+	keyField := s.codec.Match(keyFieldName)
+
+	if keyField == nil {
 		return nil, nil
 	}
 
-	f := v.Field(s.codec.keyField)
+	f := v.FieldByIndex(keyField.Index)
+	k, ok := f.Interface().(*Key)
+	if !ok {
+		return nil, fmt.Errorf("datastore: %s field on struct %T is not a *datastore.Key", keyFieldName, v.Interface())
+	}
 
-	return f.Interface().(*Key), nil
+	return k, nil
 }
 
 func saveSliceProperty(props *[]Property, name string, opts saveOpts, v reflect.Value) error {
@@ -177,16 +183,22 @@ func (s structPLS) Save() ([]Property, error) {
 }
 
 func (s structPLS) save(props *[]Property, opts saveOpts, prefix string) error {
-	for name, f := range s.codec.fields {
-		name = prefix + name
-		v := s.v.FieldByIndex(f.path)
+	for _, f := range s.codec {
+		name := prefix + f.Name
+		v := s.v.FieldByIndex(f.Index)
 		if !v.IsValid() || !v.CanSet() {
 			continue
 		}
+
+		var tagOpts saveOpts
+		if f.ParsedTag != nil {
+			tagOpts = f.ParsedTag.(saveOpts)
+		}
+
 		var opts1 saveOpts
-		opts1.noIndex = opts.noIndex || f.noIndex
-		opts1.flatten = opts.flatten || f.flatten
-		opts1.omitEmpty = f.omitEmpty // don't propagate
+		opts1.noIndex = opts.noIndex || tagOpts.noIndex
+		opts1.flatten = opts.flatten || tagOpts.flatten
+		opts1.omitEmpty = tagOpts.omitEmpty // don't propagate
 		if err := saveStructProperty(props, name, opts1, v); err != nil {
 			return err
 		}
@@ -202,7 +214,7 @@ func propertiesToProto(key *Key, props []Property) (*pb.Entity, error) {
 	indexedProps := 0
 	for _, p := range props {
 		// Do not send a Key value a a field to datastore.
-		if p.Name == "__key__" {
+		if p.Name == keyFieldName {
 			continue
 		}
 

@@ -44,7 +44,7 @@ func (s *StepConfigureVMX) Run(state multistep.StateBag) multistep.StepAction {
 	// Delete any generated addresses since we want to regenerate
 	// them. Conflicting MAC addresses is a bad time.
 	addrRegex := regexp.MustCompile(`(?i)^ethernet\d+\.generatedAddress`)
-	for k := range vmxData {
+	for k, _ := range vmxData {
 		if addrRegex.MatchString(k) {
 			delete(vmxData, k)
 		}

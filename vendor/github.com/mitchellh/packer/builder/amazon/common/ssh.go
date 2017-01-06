@@ -3,15 +3,12 @@ package common
 import (
 	"errors"
 	"fmt"
-	"net"
-	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/mitchellh/multistep"
 	packerssh "github.com/mitchellh/packer/communicator/ssh"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
 )
 
 type ec2Describer interface {
@@ -70,26 +67,8 @@ func SSHHost(e ec2Describer, private bool) func(multistep.StateBag) (string, err
 // SSHConfig returns a function that can be used for the SSH communicator
 // config for connecting to the instance created over SSH using the private key
 // or password.
-func SSHConfig(useAgent bool, username, password string) func(multistep.StateBag) (*ssh.ClientConfig, error) {
+func SSHConfig(username, password string) func(multistep.StateBag) (*ssh.ClientConfig, error) {
 	return func(state multistep.StateBag) (*ssh.ClientConfig, error) {
-		if useAgent {
-			authSock := os.Getenv("SSH_AUTH_SOCK")
-			if authSock == "" {
-				return nil, fmt.Errorf("SSH_AUTH_SOCK is not set")
-			}
-
-			sshAgent, err := net.Dial("unix", authSock)
-			if err != nil {
-				return nil, fmt.Errorf("Cannot connect to SSH Agent socket %q: %s", authSock, err)
-			}
-
-			return &ssh.ClientConfig{
-				User: username,
-				Auth: []ssh.AuthMethod{
-					ssh.PublicKeysCallback(agent.NewClient(sshAgent).Signers),
-				},
-			}, nil
-		}
 
 		privateKey, hasKey := state.GetOk("privateKey")
 		if hasKey {

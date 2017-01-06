@@ -1,52 +1,3 @@
-## 0.12.0 (November 15, 2016)
-
-FEATURES:
-* **New builder:** "cloudstack" Can create new templates for use with
-    CloudStack taking either an ISO or existing template as input. [GH-3909]
-* **New builder:** "profitbricks" Builder for creating images in the
-    ProfitBricks cloud. [GH-3660]
-* **New Builder:** "amazon-ebsvolume" Can create Amazon EBS volumes which are
-    preinitialized with a filesystem and data. [GH-4088]
-
-
-IMPROVEMENTS:
-
-  * builder/amazon: Allow polling delay override with `AWS_POLL_DELAY_SECONDS`.
-      [GH-4083]
-  * builder/amazon: Allow use of local SSH Agent. [GH-4050]
-  * builder/amazon: Dynamic source AMI [GH-3817]
-  * builder/amazon: Show AMI ID found when using `source_ami_filter`. [GH-4096]
-  * builder/googlecompute: Support `ssh_private_key_file` in communicator.
-      [GH-4101]
-  * builder/googlecompute: Support custom scopes. [GH-4043]
-  * command/push: Fix variable pushes to Atlas. Still needs Atlas server to be
-      updated before the issue will be fixed completely. [GH-4089]
-  * communicator/ssh: Improved SSH upload performance. [GH-3940]
-  * contrib/azure-setup.sh: Support for azure-cli 0.10.7. [GH-4133]
-  * docs: Fix command line variable docs. [GH-4143]
-  * post-processor/vagrant: Fixed inconsistency between vagrant-libvirt driver
-      and packer QEMU accelerator. [GH-4104]
-  * provisioner/ansible: Move info messages to log [GH-4123]
-  * provisioner/puppet: Add `puppet_bin_dir` option. [GH-4014]
-  * provisioner/salt: Add `salt_call_args` option. [GH-4158]
-  
-BUG FIXES:
-
-  * builder/amazon: Fixed an error where we wouldn't fail the build even if we
-      timed out waiting for the temporary security group to become available.
-      [GH-4099]
-  * builder/amazon: Properly cleanup temporary key pairs. [GH-4080]
-  * builder/google: Fix issue where we'd hang waiting for a startup script
-      which doesn't exist. [GH-4102]
-  * builder/qemu: Fix keycodes for ctrl, shift and alt keys. [GH-4115]
-  * builder/vmware: Fix keycodes for ctrl, shift and alt keys. [GH-4115]
-  * builder/vmware: Fixed build error when shutting down. [GH-4041]
-  * common/step_create_floppy: Fixed support for 1.44MB floppies on Windows.
-      [GH-4135]
-  * post-processor/googlecompute-export: Fixes scopes. [GH-4147]
-  * provisioner/powershell: Reverted [GH-3371] fixes quoting issue. [GH-4069]
-  * scripts: Fix build under Windows for go 1.5. [GH-4142]
-
 ## 0.11.0 (October 21, 2016)
 
 BACKWARDS INCOMPATIBILITIES:
@@ -83,7 +34,7 @@ IMPROVEMENTS:
       [GH-3663]
   * builder/amazon: Support building from scratch with amazon-chroot builder.
       [GH-3855] [GH-3895]
-  * builder/amazon: Support create an AMI with an `encrypt_boot` volume.
+  * builder/amazon: Support create an AMI with an `encrypted_boot` volume.
       [GH-3382]
   * builder/azure: Add `os_disk_size_gb`. [GH-3995]
   * builder/azure: Add location to setup script. [GH-3803]
@@ -130,7 +81,7 @@ IMPROVEMENTS:
   * builder/qemu: Specify disk format when starting qemu. [GH-3888]
   * builder/virtualbox-iso: Added `hard_drive_nonrotational` and
       `hard_drive_discard` options to enable trim/discard. [GH-4013]
-  * builder/virtualbox-iso: Added `keep_registered` option to skip cleaning up
+  * builder/virtualbox-iso: Added `keep_registed` option to skip cleaning up
       the image. [GH-3954]
   * builder/virtualbox: Add support for ctrl, shift and alt keys in
       `boot_command`.  [GH-3767]

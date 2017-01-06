@@ -37,7 +37,7 @@ func newAdapter(done <-chan struct{}, l net.Listener, config *ssh.ServerConfig, 
 }
 
 func (c *adapter) Serve() {
-	log.Printf("SSH proxy: serving on %s", c.l.Addr())
+	c.ui.Say(fmt.Sprintf("SSH proxy: serving on %s", c.l.Addr()))
 
 	for {
 		// Accept will return if either the underlying connection is closed or if a connection is made.
@@ -62,7 +62,7 @@ func (c *adapter) Serve() {
 }
 
 func (c *adapter) Handle(conn net.Conn, ui packer.Ui) error {
-	log.Print("SSH proxy: accepted connection")
+	c.ui.Message("SSH proxy: accepted connection")
 	_, chans, reqs, err := ssh.NewServerConn(conn, c.config)
 	if err != nil {
 		return errors.New("failed to handshake")
@@ -160,7 +160,7 @@ func (c *adapter) handleSession(newChannel ssh.NewChannel) error {
 						sftpCmd = "/usr/lib/sftp-server -e"
 					}
 
-					log.Print("starting sftp subsystem")
+					c.ui.Say("starting sftp subsystem")
 					go func() {
 						_ = c.remoteExec(sftpCmd, channel, channel, channel.Stderr())
 						close(done)
@@ -171,7 +171,7 @@ func (c *adapter) handleSession(newChannel ssh.NewChannel) error {
 					req.Reply(false, nil)
 				}
 			default:
-				log.Printf("rejecting %s request", req.Type)
+				c.ui.Message(fmt.Sprintf("rejecting %s request", req.Type))
 				req.Reply(false, nil)
 			}
 		}

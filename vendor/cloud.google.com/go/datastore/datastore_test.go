@@ -268,7 +268,7 @@ type Tagged struct {
 	J int `datastore:",noindex" json:"j"`
 
 	Y0 `datastore:"-"`
-	Z  chan int `datastore:"-,"`
+	Z  chan int `datastore:"-"`
 }
 
 type InvalidTagged1 struct {
@@ -278,6 +278,14 @@ type InvalidTagged1 struct {
 type InvalidTagged2 struct {
 	I int
 	J int `datastore:"I"`
+}
+
+type InvalidTagged3 struct {
+	X string `datastore:"-,noindex"`
+}
+
+type InvalidTagged4 struct {
+	X string `datastore:",garbage"`
 }
 
 type Inner1 struct {
@@ -341,7 +349,7 @@ type SliceOfSlices struct {
 	S []struct {
 		J int
 		F []float64
-	}
+	} `datastore:",flatten"`
 }
 
 type Recursive struct {
@@ -359,16 +367,16 @@ type MutuallyRecursive1 struct {
 	R []MutuallyRecursive0
 }
 
-type NestedEntity struct {
+type EntityWithKey struct {
 	I int
 	S string
 	K *Key `datastore:"__key__"`
 }
 
-type NestedEntity2 NestedEntity
+type EntityWithKey2 EntityWithKey
 
-type WithNestedEntity struct {
-	N NestedEntity
+type WithNestedEntityWithKey struct {
+	N EntityWithKey
 }
 
 type WithNonKeyField struct {
@@ -950,16 +958,6 @@ var testCases = []testCase{
 		"",
 	},
 	{
-		"save props load tagged",
-		&PropertyList{
-			Property{Name: "A", Value: int64(11), NoIndex: true},
-			Property{Name: "a", Value: int64(12), NoIndex: true},
-		},
-		&Tagged{A: 12},
-		"",
-		`cannot load field "A"`,
-	},
-	{
 		"invalid tagged1",
 		&InvalidTagged1{I: 1},
 		&InvalidTagged1{},
@@ -969,8 +967,22 @@ var testCases = []testCase{
 	{
 		"invalid tagged2",
 		&InvalidTagged2{I: 1, J: 2},
-		&InvalidTagged2{},
-		"struct tag has repeated property name",
+		&InvalidTagged2{J: 2},
+		"",
+		"",
+	},
+	{
+		"invalid tagged3",
+		&InvalidTagged3{X: "hello"},
+		&InvalidTagged3{},
+		"struct tag has invalid property name: \"-\"",
+		"",
+	},
+	{
+		"invalid tagged4",
+		&InvalidTagged4{X: "hello"},
+		&InvalidTagged4{},
+		"struct tag has invalid option: \"garbage\"",
 		"",
 	},
 	{
@@ -1448,15 +1460,15 @@ var testCases = []testCase{
 	},
 	{
 		"nested entity with key",
-		&WithNestedEntity{
-			N: NestedEntity{
+		&WithNestedEntityWithKey{
+			N: EntityWithKey{
 				I: 12,
 				S: "abcd",
 				K: testKey0,
 			},
 		},
-		&WithNestedEntity{
-			N: NestedEntity{
+		&WithNestedEntityWithKey{
+			N: EntityWithKey{
 				I: 12,
 				S: "abcd",
 				K: testKey0,
@@ -1466,15 +1478,30 @@ var testCases = []testCase{
 		"",
 	},
 	{
-		"entity with key at top level (ignore key)",
-		&NestedEntity2{
+		"entity with key at top level",
+		&EntityWithKey{
 			I: 12,
 			S: "abc",
 			K: testKey0,
 		},
-		&NestedEntity2{
+		&EntityWithKey{
 			I: 12,
 			S: "abc",
+			K: testKey0,
+		},
+		"",
+		"",
+	},
+	{
+		"entity with key at top level (key is populated on load)",
+		&EntityWithKey{
+			I: 12,
+			S: "abc",
+		},
+		&EntityWithKey{
+			I: 12,
+			S: "abc",
+			K: testKey0,
 		},
 		"",
 		"",
@@ -1498,8 +1525,8 @@ var testCases = []testCase{
 	},
 	{
 		"nested load entity with key",
-		&WithNestedEntity{
-			N: NestedEntity{
+		&WithNestedEntityWithKey{
+			N: EntityWithKey{
 				I: 12,
 				S: "abcd",
 				K: testKey0,
@@ -1530,8 +1557,8 @@ var testCases = []testCase{
 			}, NoIndex: false},
 		},
 
-		&WithNestedEntity{
-			N: NestedEntity{
+		&WithNestedEntityWithKey{
+			N: EntityWithKey{
 				I: 12,
 				S: "abcd",
 				K: testKey0,
@@ -1661,15 +1688,15 @@ var testCases = []testCase{
 	{
 		"recursive struct",
 		&Recursive{},
-		nil,
-		"recursive struct",
+		&Recursive{},
+		"",
 		"",
 	},
 	{
 		"mutually recursive struct",
 		&MutuallyRecursive0{},
-		nil,
-		"recursive struct",
+		&MutuallyRecursive0{},
+		"",
 		"",
 	},
 	{

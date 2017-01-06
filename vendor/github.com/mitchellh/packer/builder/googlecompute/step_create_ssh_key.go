@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/mitchellh/multistep"
@@ -16,9 +15,8 @@ import (
 
 // StepCreateSSHKey represents a Packer build step that generates SSH key pairs.
 type StepCreateSSHKey struct {
-	Debug          bool
-	DebugKeyPath   string
-	PrivateKeyFile string
+	Debug        bool
+	DebugKeyPath string
 }
 
 // Run executes the Packer build step that generates SSH key pairs.
@@ -26,21 +24,6 @@ type StepCreateSSHKey struct {
 // "ssh_public_key".
 func (s *StepCreateSSHKey) Run(state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
-
-	if s.PrivateKeyFile != "" {
-		ui.Say("Using existing SSH private key")
-		privateKeyBytes, err := ioutil.ReadFile(s.PrivateKeyFile)
-		if err != nil {
-			state.Put("error", fmt.Errorf(
-				"Error loading configured private key file: %s", err))
-			return multistep.ActionHalt
-		}
-
-		state.Put("ssh_private_key", string(privateKeyBytes))
-		state.Put("ssh_public_key", "")
-
-		return multistep.ActionContinue
-	}
 
 	ui.Say("Creating temporary SSH key for instance...")
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)

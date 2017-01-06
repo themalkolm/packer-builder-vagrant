@@ -58,8 +58,7 @@ builder.
     how to set this.](/docs/builders/amazon.html#specifying-amazon-credentials)
 
 -   `source_ami` (string) - The initial AMI used as a base for the newly
-    created machine. `source_ami_filter` may be used instead to populate this
-    automatically.
+    created machine.
 
 ### Optional:
 
@@ -175,34 +174,6 @@ builder.
 -   `skip_region_validation` (boolean) - Set to true if you want to skip 
     validation of the region configuration option.  Defaults to false.
 
--   `source_ami_filter` (object) - Filters used to populate the `source_ami` field.
-    Example:
-    ``` {.javascript}
-    "source_ami_filter": {
-        "filters": {
-          "virtualization-type": "hvm",
-          "name": "*ubuntu-xenial-16.04-amd64-server-*",
-          "root-device-type": "ebs"
-        },
-        "owners": ["099720109477"],
-        "most_recent": true
-    }
-    ```
-    This selects the most recent Ubuntu 16.04 HVM EBS AMI from Canonical.
-    NOTE: This will fail unless *exactly* one AMI is returned. In the above
-    example, `most_recent` will cause this to succeed by selecting the newest image.
-
-    -   `filters` (map of strings) - filters used to select a `source_ami`.
-         NOTE: This will fail unless *exactly* one AMI is returned.
-         Any filter described in the docs for [DescribeImages](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeImages.html)
-         is valid.
-
-    -   `owners` (array of strings) - This scopes the AMIs to certain Amazon account IDs.
-         This is helpful to limit the AMIs to a trusted third party, or to your own account.
-
-    -   `most_recent` (bool) - Selects the newest created image when true.
-         This is most useful for selecting a daily distro build.
-
 -   `spot_price` (string) - The maximum hourly price to pay for a spot instance
     to create the AMI. Spot instances are a type of instance that EC2 starts
     when the current spot price is less than the maximum price you specify. Spot
@@ -217,20 +188,11 @@ builder.
     `Linux/UNIX (Amazon VPC)`, `SUSE Linux (Amazon VPC)`, `Windows (Amazon VPC)`
 
 -   `ssh_keypair_name` (string) - If specified, this is the key that will be
-    used for SSH with the machine. The key must match a key pair name loaded
-    up into Amazon EC2.  By default, this is blank, and Packer will
+    used for SSH with the machine. By default, this is blank, and Packer will
     generate a temporary keypair unless
     [`ssh_password`](/docs/templates/communicator.html#ssh_password) is used.
     [`ssh_private_key_file`](/docs/templates/communicator.html#ssh_private_key_file)
-    or `ssh_agent_auth` must be specified when `ssh_keypair_name` is utilized.
-
--   `ssh_agent_auth` (boolean) - If true, the local SSH agent will be used to
-    authenticate connections to the source instance. No temporary keypair will
-    be created, and the values of `ssh_password` and `ssh_private_key_file` will
-    be ignored. To use this option with a key pair already configured in the source
-    AMI, leave the `ssh_keypair_name` blank. To associate an existing key pair
-    in AWS with the source instance, set the `ssh_keypair_name` field to the name
-    of the key pair.
+    must be specified with this.
 
 -   `ssh_private_ip` (boolean) - If true, then SSH will always use the private
     IP if available.
@@ -354,4 +316,4 @@ termination of the instance building the new image. Packer will attempt to clean
 up all residual volumes that are not designated by the user to remain after
 termination. If you need to preserve those source volumes, you can overwrite the
 termination setting by specifying `delete_on_termination=false` in the
-`launch_block_device_mappings` block for the device.
+`launch_device_mappings` block for the device.

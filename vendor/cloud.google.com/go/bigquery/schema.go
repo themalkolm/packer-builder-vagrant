@@ -16,7 +16,10 @@ package bigquery
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
+
+	"cloud.google.com/go/internal/atomiccache"
 
 	bq "google.golang.org/api/bigquery/v2"
 )
@@ -117,35 +120,66 @@ const (
 	DateTimeFieldType  FieldType = "DATETIME"
 )
 
-var errNoStruct = errors.New("bigquery: can only infer schema from struct or pointer to struct")
-var errUnsupportedFieldType = errors.New("bigquery: unsupported type of field in struct")
+var (
+	errNoStruct             = errors.New("bigquery: can only infer schema from struct or pointer to struct")
+	errUnsupportedFieldType = errors.New("bigquery: unsupported type of field in struct")
+	errInvalidFieldName     = errors.New("bigquery: invalid name of field in struct")
+)
 
 var typeOfByteSlice = reflect.TypeOf([]byte{})
 
 // InferSchema tries to derive a BigQuery schema from the supplied struct value.
 // NOTE: All fields in the returned Schema are configured to be required,
 // unless the corresponding field in the supplied struct is a slice or array.
+//
 // It is considered an error if the struct (including nested structs) contains
 // any exported fields that are pointers or one of the following types:
 // uint, uint64, uintptr, map, interface, complex64, complex128, func, chan.
 // In these cases, an error will be returned.
 // Future versions may handle these cases without error.
+//
+// Recursively defined structs are also disallowed.
 func InferSchema(st interface{}) (Schema, error) {
-	return inferStruct(reflect.TypeOf(st))
+	return inferSchemaReflect(reflect.TypeOf(st))
 }
 
-func inferStruct(rt reflect.Type) (Schema, error) {
-	switch rt.Kind() {
+var schemaCache atomiccache.Cache
+
+type cacheVal struct {
+	schema Schema
+	err    error
+}
+
+func inferSchemaReflect(t reflect.Type) (Schema, error) {
+	cv := schemaCache.Get(t, func() interface{} {
+		s, err := inferStruct(t, map[reflect.Type]bool{})
+		return cacheVal{s, err}
+	}).(cacheVal)
+	return cv.schema, cv.err
+}
+
+func inferStruct(t reflect.Type, seen map[reflect.Type]bool) (Schema, error) {
+	if seen[t] {
+		return nil, fmt.Errorf("bigquery: schema inference for recursive type %s", t)
+	}
+	seen[t] = true
+	switch t.Kind() {
+	case reflect.Ptr:
+		if t.Elem().Kind() != reflect.Struct {
+			return nil, errNoStruct
+		}
+		t = t.Elem()
+		fallthrough
+
 	case reflect.Struct:
-		return inferFields(rt)
+		return inferFields(t, seen)
 	default:
 		return nil, errNoStruct
 	}
-
 }
 
 // inferFieldSchema infers the FieldSchema for a Go type
-func inferFieldSchema(rt reflect.Type) (*FieldSchema, error) {
+func inferFieldSchema(rt reflect.Type, seen map[reflect.Type]bool) (*FieldSchema, error) {
 	switch rt {
 	case typeOfByteSlice:
 		return &FieldSchema{Required: true, Type: BytesFieldType}, nil
@@ -169,15 +203,15 @@ func inferFieldSchema(rt reflect.Type) (*FieldSchema, error) {
 			return nil, errUnsupportedFieldType
 		}
 
-		f, err := inferFieldSchema(et)
+		f, err := inferFieldSchema(et, seen)
 		if err != nil {
 			return nil, err
 		}
 		f.Repeated = true
 		f.Required = false
 		return f, nil
-	case reflect.Struct:
-		nested, err := inferFields(rt)
+	case reflect.Struct, reflect.Ptr:
+		nested, err := inferStruct(rt, seen)
 		if err != nil {
 			return nil, err
 		}
@@ -194,10 +228,14 @@ func inferFieldSchema(rt reflect.Type) (*FieldSchema, error) {
 }
 
 // inferFields extracts all exported field types from struct type.
-func inferFields(rt reflect.Type) (Schema, error) {
+func inferFields(rt reflect.Type, seen map[reflect.Type]bool) (Schema, error) {
 	var s Schema
-	for _, field := range fieldCache.Fields(rt) {
-		f, err := inferFieldSchema(field.Type)
+	fields, err := fieldCache.Fields(rt)
+	if err != nil {
+		return nil, err
+	}
+	for _, field := range fields {
+		f, err := inferFieldSchema(field.Type, seen)
 		if err != nil {
 			return nil, err
 		}

@@ -11,7 +11,6 @@ azure_subscription_id= # Derived from the account after login
 azure_tenant_id=       # Derived from the account after login
 location=
 azure_object_id=
-azureversion=
 
 showhelp() {
 	echo "azure-setup"
@@ -146,31 +145,10 @@ createStorageAccount() {
 	fi
 }
 
-createApplication() {
-	echo "==> Creating application"
-	azure_client_id=$(azure ad app create -n $meta_name -i http://$meta_name --home-page http://$meta_name -p $azure_client_secret --json | jq -r .appId)
-	if [ $? -ne 0 ]; then
-		echo "Error creating application: $meta_name @ http://$meta_name"
-		exit 1
-	fi
-}
-
-createServicePrincipal() {
+createServicePrinciple() {
 	echo "==> Creating service principal"
-	# Azure CLI 0.10.2 introduced a breaking change, where appId must be supplied with the -a switch
-	# prior version accepted appId as the only parameter without a switch
-	newer_syntax=false
-	IFS='.' read -ra azureversionsemver <<< "$azureversion"
-	if [ ${azureversionsemver[0]} -ge 0 ] && [ ${azureversionsemver[1]} -ge 10 ] && [ ${azureversionsemver[2]} -ge 2 ]; then	
-		newer_syntax=true
-	fi
-
-	if [ "${newer_syntax}" = true ]; then	
-		azure_object_id=$(azure ad sp create -a $azure_client_id --json | jq -r .objectId)
-	else 
-		azure_object_id=$(azure ad sp create $azure_client_id --json | jq -r .objectId)
-	fi
-
+	azure_object_id=$(azure ad sp create -n $meta_name --home-page http://$meta_name --identifier-uris http://$meta_name/example -p $azure_client_secret --json | jq -r .objectId)
+	azure_client_id=$(azure ad app show -c $meta_name --json | jq -r .[0].appId)
 	if [ $? -ne 0 ]; then
 		echo "Error creating service principal: $azure_client_id"
 		exit 1
@@ -223,9 +201,7 @@ setup() {
 	sleep 5
 	createStorageAccount
 	sleep 5
-	createApplication
-	sleep 5
-	createServicePrincipal
+	createServicePrinciple
 	sleep 5
 	createPermissions
 

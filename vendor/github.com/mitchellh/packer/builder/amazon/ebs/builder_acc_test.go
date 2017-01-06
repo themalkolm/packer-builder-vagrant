@@ -138,7 +138,7 @@ func checkRegionCopy(regions []string) builderT.TestCheckFunc {
 		for _, r := range regions {
 			regionSet[r] = struct{}{}
 		}
-		for r := range artifact.Amis {
+		for r, _ := range artifact.Amis {
 			if _, ok := regionSet[r]; !ok {
 				return fmt.Errorf("unknown region: %s", r)
 			}
@@ -206,10 +206,7 @@ func testEC2Conn() (*ec2.EC2, error) {
 		return nil, err
 	}
 
-	session, err := session.NewSession(config)
-	if err != nil {
-		return nil, err
-	}
+	session := session.New(config)
 	return ec2.New(session), nil
 }
 

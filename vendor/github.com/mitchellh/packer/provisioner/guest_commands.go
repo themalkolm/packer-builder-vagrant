@@ -16,12 +16,12 @@ type guestOSTypeCommand struct {
 }
 
 var guestOSTypeCommands = map[string]guestOSTypeCommand{
-	UnixOSType: {
+	UnixOSType: guestOSTypeCommand{
 		chmod:     "chmod %s '%s'",
 		mkdir:     "mkdir -p '%s'",
 		removeDir: "rm -rf '%s'",
 	},
-	WindowsOSType: {
+	WindowsOSType: guestOSTypeCommand{
 		chmod:     "echo 'skipping chmod %s %s'", // no-op
 		mkdir:     "powershell.exe -Command \"New-Item -ItemType directory -Force -ErrorAction SilentlyContinue -Path %s\"",
 		removeDir: "powershell.exe -Command \"rm %s -recurse -force\"",
