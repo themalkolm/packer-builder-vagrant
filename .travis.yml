@@ -9,10 +9,12 @@ install:
 script:
   - ln -s ${TRAVIS_BUILD_DIR} ${GOPATH}/src/github.com/${TRAVIS_REPO_SLUG}
   - gox -arch="amd64" -os="darwin linux windows" -output "build/packer-${PACKER_VERSION}_{{.Dir}}_{{.OS}}_{{.Arch}}" github.com/${TRAVIS_REPO_SLUG}
+  - sha1sum build/packer-${PACKER_VERSION}_packer-builder-vagrant* > build/packer-${PACKER_VERSION}_packer-builder-vagrant.sha1
 deploy:
   - provider: releases
     api_key: ${GITHUB_API_KEY}
     file:
+      - build/packer-${PACKER_VERSION}_packer-builder-vagrant.sha1
       - build/packer-${PACKER_VERSION}_packer-builder-vagrant_darwin_amd64
       - build/packer-${PACKER_VERSION}_packer-builder-vagrant_linux_amd64
       - build/packer-${PACKER_VERSION}_packer-builder-vagrant_windows_amd64.exe
