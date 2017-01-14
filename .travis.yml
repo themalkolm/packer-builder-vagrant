@@ -12,6 +12,7 @@ script:
   - cd build
   - sha1sum packer-${PACKER_VERSION}_packer-builder-vagrant*
   - sha1sum packer-${PACKER_VERSION}_packer-builder-vagrant* > packer-${PACKER_VERSION}_packer-builder-vagrant.sha1
+  - cd ..
 deploy:
   - provider: releases
     api_key: ${GITHUB_API_KEY}
