@@ -140,7 +140,11 @@ Troubleshooting
 
 Note that this plugin does _very_ little. It simply generates a proper `source_path` value and hands over control to the packer itself. This means you can always run exactly the same template without this plugin by simply providing `source_path` explicitly.
 
-It is up to you to verify that vagrant is working. Packer is working (by running your template without this plugin). Only then you should start blaming this plugin for not working. The easiest way is to clone this repo and run tests I use myself to verify everything is still working:
+* You need to verify that vagrant is working.
+* You need to verify that packer is working by running your template without this plugin.
+* You need to make sure that plugin is compiled for your packer version.
+
+Only then you should start blaming this plugin for not working. The easiest way is to clone this repo and run tests I use myself to verify everything is still kind of OK:
 
 ```
 $ git clone https://github.com/themalkolm/packer-builder-vagrant.git
