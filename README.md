@@ -135,3 +135,19 @@ Box file to look for in the box directory. This file will provided in `source_pa
 
 Here you should provide configuration for the actual builder to be used. `source_path` will be automatically populated by box discovery. Note that you can always explicitly define `source_path` for test purposes. In this case `source_path` won't be changed.
 
+Troubleshooting
+---------------
+
+Note that this plugin does _very_ little. It simply generates a proper `source_path` value and hands over control to the packer itself. This means you can always run exactly the same template without this plugin by simply providing `source_path` explicitly.
+
+It is up to you to verify that vagrant is working. Packer is working (by running your template without this plugin). Only then you should start blaming this plugin for not working. The easiest way is to clone this repo and run tests I use myself to verify everything is still working:
+
+```
+$ git clone https://github.com/themalkolm/packer-builder-vagrant.git
+$ cd packer-builder-vagrant
+$ cd test/virtualbox
+$ ./test.sh
+...
+OK
+```
+```
