@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
-	"path/filepath"
 
 	"github.com/blang/semver"
 	"github.com/koding/vagrantutil"
@@ -30,7 +30,7 @@ func NewVagrant(ui packer.Ui) (*Vagrant, error) {
 		return nil, err
 	}
 	return &Vagrant{
-		ui: ui,
+		ui:      ui,
 		vagrant: v,
 	}, nil
 }
@@ -124,9 +124,9 @@ func (v *Vagrant) fetchBoxFile(url, name, version, provider, pattern string) (st
 
 func (v *Vagrant) downloadBox(nameOrUrl, version, provider string) (bool, error) {
 	box := vagrantutil.Box{
-		Name: nameOrUrl,
+		Name:     nameOrUrl,
 		Provider: provider,
-		Version: version,
+		Version:  version,
 	}
 
 	output, err := v.vagrant.BoxAdd(&box)
@@ -215,7 +215,7 @@ func (v *Vagrant) findBox(name, version, provider string) (*vagrantutil.Box, err
 			}
 		}
 	} else {
-		box = found[len(found) - 1]
+		box = found[len(found)-1]
 	}
 
 	return box, nil

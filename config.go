@@ -10,17 +10,17 @@ import (
 )
 
 type Config struct {
-	common.PackerConfig  `mapstructure:",squash"`
+	common.PackerConfig `mapstructure:",squash"`
 
-	Name          string `mapstructure:"box_name"`
-	URL           string `mapstructure:"box_url"`
-	Version       string `mapstructure:"box_version"`
-	Provider      string `mapstructure:"box_provider"`
-	BoxFile       string `mapstructure:"box_file"`
+	Name     string `mapstructure:"box_name"`
+	URL      string `mapstructure:"box_url"`
+	Version  string `mapstructure:"box_version"`
+	Provider string `mapstructure:"box_provider"`
+	BoxFile  string `mapstructure:"box_file"`
 
 	BuilderConfig map[string]interface{} `mapstructure:"builder"`
 
-	ctx           interpolate.Context
+	ctx interpolate.Context
 }
 
 func NewConfig(raws ...interface{}) (*Config, []string, error) {
@@ -54,4 +54,3 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 
 	return c, nil, nil
 }
-

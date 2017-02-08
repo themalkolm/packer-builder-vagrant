@@ -7,11 +7,11 @@ import (
 )
 
 type StepFetchBox struct {
-	URL           string
-	Name          string
-	Version       string
-	Provider      string
-	BoxFile       string
+	URL      string
+	Name     string
+	Version  string
+	Provider string
+	BoxFile  string
 
 	BuilderConfig map[string]interface{}
 }

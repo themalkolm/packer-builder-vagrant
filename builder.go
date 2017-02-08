@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"errors"
+	"log"
 
 	"github.com/mitchellh/multistep"
 	"github.com/mitchellh/packer/common"
@@ -42,7 +42,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			Name:          b.config.Name,
 			Version:       b.config.Version,
 			Provider:      b.config.Provider,
-			BoxFile :      b.config.BoxFile,
+			BoxFile:       b.config.BoxFile,
 			BuilderConfig: b.config.BuilderConfig,
 		},
 		&StepBuilder{

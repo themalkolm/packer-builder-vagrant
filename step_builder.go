@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 
 	"github.com/mitchellh/multistep"
 	"github.com/mitchellh/packer/command"
@@ -40,7 +40,7 @@ func (s *StepBuilder) doRun(state multistep.StateBag) error {
 	ui.Message(fmt.Sprintf("(vagrant) Builder type: %s", builderType))
 
 	ui.Message("(vagrant) Builder ...")
-	builder, found := command.Builders[builderType];
+	builder, found := command.Builders[builderType]
 	if !found {
 		return fmt.Errorf("unsupported builder type: %s", builderType)
 	}
