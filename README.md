@@ -1,4 +1,4 @@
-# packer-builder-vagrant [![Build Status](https://travis-ci.org/themalkolm/packer-builder-vagrant.svg?branch=master)](https://travis-ci.org/themalkolm/packer-builder-vagrant)
+# packer-builder-vagrant [![Build Status](https://travis-ci.org/themalkolm/packer-builder-vagrant.svg?branch=master)](https://travis-ci.org/themalkolm/packer-builder-vagrant) [![Go Report Card](https://goreportcard.com/badge/github.com/themalkolm/packer-builder-vagrant)](https://goreportcard.com/report/github.com/themalkolm/packer-builder-vagrant)
 
 Proxy builder. It fetches vagrant box (if it is not yet fetched) and forwards the actual building the to
 corresponding builder.
