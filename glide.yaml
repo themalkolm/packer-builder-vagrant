@@ -1,4 +1,4 @@
-package: .
+package: github.com/themalkolm/packer-builder-vagrant
 import:
 - package: github.com/blang/semver
   version: v3.3.0
