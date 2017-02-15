@@ -1,11 +1,13 @@
-hash: 51c74fe1a9888c54df2604b2493962ca5260ecce080962e626e2959f07b87d63
-updated: 2016-12-13T22:12:40.439643789+01:00
+hash: 509f82bea8156162edbe27b089ac930f1a6cc12e294247de750c437b34d6436f
+updated: 2017-02-15T23:34:28.589524816+01:00
 imports:
 - name: cloud.google.com/go
   version: aec0e559d3d92ccdd9729d28f44b72d083946620
   subpackages:
   - compute/metadata
   - internal
+- name: github.com/1and1/oneandone-cloudserver-sdk-go
+  version: 5678f03fc801525df794f953aa82f5ad7555a2ef
 - name: github.com/aws/aws-sdk-go
   version: d5fd6983e17a1644149fb634fdcf69bd03cb8b21
   subpackages:
@@ -58,8 +60,6 @@ imports:
   - autorest/date
   - autorest/to
   - autorest/validation
-- name: github.com/Azure/go-ntlmssp
-  version: 2d5c7863390875bc4b5f81cdb65422602d15b003
 - name: github.com/biogo/hts
   version: 319a3a2e4e1c92600d37561287b8c74d6d82f016
   subpackages:
@@ -82,8 +82,29 @@ imports:
   version: 9235644dd9e52eeae6fa48efd539fdc351a0af53
   subpackages:
   - query
+- name: github.com/google/shlex
+  version: 6f45313302b9c56850fc17f99e40caebce98c716
 - name: github.com/googleapis/gax-go
   version: da06d194a00e19ce00d9011a13931c3f6f6887c7
+- name: github.com/gophercloud/gophercloud
+  version: ff77917b4d967827a1a375c97214f06b030e519a
+  subpackages:
+  - openstack
+  - openstack/common/extensions
+  - openstack/compute/v2/extensions
+  - openstack/compute/v2/extensions/floatingips
+  - openstack/compute/v2/extensions/keypairs
+  - openstack/compute/v2/extensions/startstop
+  - openstack/compute/v2/flavors
+  - openstack/compute/v2/images
+  - openstack/compute/v2/servers
+  - openstack/identity/v2/tenants
+  - openstack/identity/v2/tokens
+  - openstack/identity/v3/tokens
+  - openstack/imageservice/v2/images
+  - openstack/imageservice/v2/members
+  - openstack/utils
+  - pagination
 - name: github.com/hashicorp/atlas-go
   version: 1792bd8de119ba49b17fd8d3c3c1f488ec613e62
   subpackages:
@@ -103,6 +124,21 @@ imports:
   version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
 - name: github.com/jmespath/go-jmespath
   version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
+- name: github.com/joyent/gocommon
+  version: b78708995d1c2ebdb64a3061b0bca5d8ccdf0fc2
+  subpackages:
+  - client
+  - errors
+  - http
+  - jpc
+- name: github.com/joyent/gosdc
+  version: ec8b3503a75edca0df26581b83807677b0240716
+  subpackages:
+  - cloudapi
+- name: github.com/joyent/gosign
+  version: 9abcee278795b82b36858cdfc857c8a0e7de797c
+  subpackages:
+  - auth
 - name: github.com/klauspost/compress
   version: e3b7981a12dd3cab49afa1d3a50e715846f23732
   subpackages:
@@ -149,11 +185,12 @@ imports:
 - name: github.com/mitchellh/multistep
   version: 162146fc57112954184d90266f4733e900ed05a5
 - name: github.com/mitchellh/packer
-  version: 59efd2b81202611ef29c8b44734c52ac68ff906f
+  version: f25949eb2dd5cafb8661048ef4a97b68e7186e8b
   subpackages:
   - builder/amazon/chroot
   - builder/amazon/common
   - builder/amazon/ebs
+  - builder/amazon/ebsvolume
   - builder/amazon/instance
   - builder/azure/arm
   - builder/azure/common
@@ -163,16 +200,22 @@ imports:
   - builder/azure/common/template
   - builder/azure/pkcs12
   - builder/azure/pkcs12/rc2
+  - builder/cloudstack
   - builder/digitalocean
   - builder/docker
   - builder/file
   - builder/googlecompute
+  - builder/hyperv/common
+  - builder/hyperv/iso
   - builder/null
+  - builder/oneandone
   - builder/openstack
   - builder/parallels/common
   - builder/parallels/iso
   - builder/parallels/pvm
+  - builder/profitbricks
   - builder/qemu
+  - builder/triton
   - builder/virtualbox/common
   - builder/virtualbox/iso
   - builder/virtualbox/ovf
@@ -181,6 +224,8 @@ imports:
   - builder/vmware/vmx
   - command
   - common
+  - common/powershell
+  - common/powershell/hyperv
   - common/ssh
   - common/uuid
   - communicator/none
@@ -215,6 +260,7 @@ imports:
   - provisioner/ansible-local
   - provisioner/chef-client
   - provisioner/chef-solo
+  - provisioner/converge
   - provisioner/file
   - provisioner/powershell
   - provisioner/puppet-masterless
@@ -245,38 +291,24 @@ imports:
   version: 839d9e913e063e28dfd0e6c7b7512793e0a48be9
 - name: github.com/pkg/sftp
   version: 4d0e916071f68db74f8a73926335f809396d6b42
-- name: github.com/rackspace/gophercloud
-  version: e00690e87603abe613e9f02c816c7c4bef82e063
-  subpackages:
-  - openstack
-  - openstack/common/extensions
-  - openstack/compute/v2/extensions
-  - openstack/compute/v2/extensions/floatingip
-  - openstack/compute/v2/extensions/keypairs
-  - openstack/compute/v2/extensions/startstop
-  - openstack/compute/v2/flavors
-  - openstack/compute/v2/images
-  - openstack/compute/v2/servers
-  - openstack/identity/v2/tenants
-  - openstack/identity/v2/tokens
-  - openstack/identity/v3/tokens
-  - openstack/utils
-  - pagination
-  - testhelper
-  - testhelper/client
+- name: github.com/profitbricks/profitbricks-sdk-go
+  version: b279e1adcaf1c9cae4d6520c1bdbbf4674e7806e
 - name: github.com/tent/http-link-go
   version: ac974c61c2f990f4115b119354b5e0b47550e888
 - name: github.com/ugorji/go
   version: 9c7f9b7a2bc3a520f7c7b30b34b7f85f47fe27b6
   subpackages:
   - codec
+- name: github.com/xanzy/go-cloudstack
+  version: deca6e17c056012b540aa2d2eae3ea1e63203b85
+  subpackages:
+  - cloudstack
 - name: golang.org/x/crypto
   version: ca7e7f10cb9fd9c1a6ff7f60436c086d73714180
   subpackages:
   - curve25519
   - ed25519
   - ed25519/internal/edwards25519
-  - md4
   - ssh
   - ssh/agent
 - name: golang.org/x/net
@@ -302,6 +334,16 @@ imports:
   - internal
   - jws
   - jwt
+- name: golang.org/x/text
+  version: 506f9d5c962f284575e88337e7d9296d27e729d3
+  subpackages:
+  - encoding
+  - encoding/internal
+  - encoding/internal/identifier
+  - encoding/unicode
+  - internal/utf8internal
+  - runes
+  - transform
 - name: google.golang.org/api
   version: 6ae94d3fbc17a6600999dc24c28bd01735a87b76
   subpackages:
