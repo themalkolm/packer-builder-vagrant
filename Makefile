@@ -1,7 +1,7 @@
 VERSION        ?= 0.1.0
-GOPKG          = github.com/themalkolm/packer-builder-vagrant
+GOPKG           = github.com/themalkolm/packer-builder-vagrant
 DESTDIR        ?= dist
-PACKER_VERSION = 0.11.0
+PACKER_VERSION  = 0.11.0
 
 all: build
 
