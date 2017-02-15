@@ -3,8 +3,8 @@ language: go
 go:
   - 1.7
 env:
-  - PACKER_VERSION=0.11.0
-  - PACKER_PLUGIN_BIN=packer-builder-vagrant
+  - PACKER_VERSION=0.11.0 \
+    PACKER_PLUGIN_BIN=packer-builder-vagrant
 script:
   - ln -s ${TRAVIS_BUILD_DIR} ${GOPATH}/src/github.com/${TRAVIS_REPO_SLUG}
   - make dist
