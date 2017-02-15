@@ -1,9 +1,9 @@
 sudo: false
 language: go
-env:
-  - PACKER_VERSION=0.11.0
 go:
   - 1.7
+env:
+  - PACKER_VERSION=0.11.0
 script:
   - ln -s ${TRAVIS_BUILD_DIR} ${GOPATH}/src/github.com/${TRAVIS_REPO_SLUG}
   - make dist
