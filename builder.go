@@ -26,7 +26,7 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	b.config = c
 
 	//
-	// Quick for to pass -force flag down to the wrapped builder
+	// Quick fix to pass -force flag down to the wrapped builder
 	//
 	// https://github.com/themalkolm/packer-builder-vagrant/issues/2
 	//
