@@ -13,7 +13,7 @@ fmt:
 build:
 	mkdir -p build
 	go build -v \
-	    -ldflags="-X main.Version=$(VERSION)" \
+	    -ldflags="-s -w -X main.Version=$(VERSION)" \
 	    -o ./build/packer-$(PACKER_VERSION)_packer-builder-vagrant_$(shell go env GOOS)_$(shell go env GOARCH) $(GOPKG)
 
 .PHONY: dist
