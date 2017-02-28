@@ -34,7 +34,7 @@ Installation
 
 ### Pre-built binaries
 
-The easiest way to install this post-processor is to download a pre-built binary from release page. Download the
+The easiest way to install this post-processor is to download a pre-built binary from [release page](https://github.com/themalkolm/packer-builder-vagrant/releases). Download the
 correct binary for your platform and place it in one of the following places:
 
 * The directory where packer is, or the executable directory.
