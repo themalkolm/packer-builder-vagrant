@@ -1,7 +1,7 @@
 sudo: false
 language: go
 go:
-  - 1.7
+  - 1.8
 env:
   - PACKER_VERSION=0.12.2 \
     PACKER_PLUGIN_BIN=packer-builder-vagrant
