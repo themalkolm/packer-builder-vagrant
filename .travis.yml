@@ -8,7 +8,6 @@ env:
 script:
   - ln -s ${TRAVIS_BUILD_DIR} ${GOPATH}/src/github.com/${TRAVIS_REPO_SLUG}
   - make dist
-  - mv build/packer-${PACKER_VERSION}_${PACKER_PLUGIN_BIN}_windows_amd64{,.exe}
 deploy:
   - provider: releases
     api_key: ${GITHUB_API_KEY}
