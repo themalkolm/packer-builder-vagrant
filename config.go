@@ -29,7 +29,9 @@ func NewConfig(raws ...interface{}) (*Config, []string, error) {
 		Interpolate:        true,
 		InterpolateContext: &c.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
-			Exclude: []string{},
+			Exclude: []string{
+				"builder",
+			},
 		},
 	}, raws...)
 	if err != nil {
