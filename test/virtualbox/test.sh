@@ -2,10 +2,10 @@
 
 set -xeu
 
-BOX_NAME="bento/centos-7.2"
-BOX_VERSION="2.3.1"
-BOX_NAME_42="bento42/centos-7.2"
-BOX_FILE="bento-VAGRANTSLASH-centos-7.2-virtualbox.box"
+BOX_NAME="bento/centos-7.3"
+BOX_VERSION="2.3.5"
+BOX_NAME_42="bento42/centos-7.3"
+BOX_FILE="bento-VAGRANTSLASH-centos-7.3-virtualbox.box"
 
 function say_green {
     #
