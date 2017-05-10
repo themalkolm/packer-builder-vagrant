@@ -3,7 +3,6 @@ ARCH           ?= $(shell go env GOARCH)
 
 VERSION        ?= 0.2.0
 GOPKG          ?= github.com/themalkolm/packer-builder-vagrant
-DESTDIR        ?= dist
 PACKER_VERSION ?= 1.0.0
 
 BINARY         ?= packer-$(PACKER_VERSION)_packer-builder-vagrant_$(OS)_$(ARCH)
@@ -32,11 +31,6 @@ dist:
 	OS=linux   ARCH=amd64 make build
 	OS=darwin  ARCH=amd64 make build
 	OS=windows ARCH=amd64 make build
-
-.PHONY: install
-install: build
-	install -d                      $(DESTDIR)/bin
-	install -m 0755 ./build/brew-me $(DESTDIR)/bin
 
 .PHONY: clean
 clean:
