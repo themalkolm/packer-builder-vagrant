@@ -32,6 +32,8 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 	//
 	b.config.BuilderConfig["packer_force"] = b.config.PackerForce
 	b.config.BuilderConfig["packer_debug"] = b.config.PackerDebug
+	b.config.BuilderConfig["packer_on_error"] = b.config.PackerOnError
+	b.config.BuilderConfig["packer_user_variables"] = b.config.PackerUserVars
 
 	return warnings, nil
 }
