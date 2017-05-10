@@ -1,4 +1,6 @@
-#!/bin/bash -xe
+#!/bin/bash
+
+set -xeu
 
 BOX_NAME="bento/centos-7.2"
 BOX_VERSION="2.3.1"
