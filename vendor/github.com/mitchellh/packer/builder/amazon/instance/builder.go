@@ -63,13 +63,22 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		InterpolateContext: &b.config.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
 			Exclude: []string{
+				"ami_description",
 				"bundle_upload_command",
 				"bundle_vol_command",
+				"run_tags",
+				"run_volume_tags",
+				"snapshot_tags",
+				"tags",
 			},
 		},
 	}, configs...)
 	if err != nil {
 		return nil, err
+	}
+
+	if b.config.PackerConfig.PackerForce {
+		b.config.AMIForceDeregister = true
 	}
 
 	if b.config.BundleDestination == "" {
@@ -223,6 +232,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			AvailabilityZone:         b.config.AvailabilityZone,
 			BlockDevices:             b.config.BlockDevices,
 			Tags:                     b.config.RunTags,
+			Ctx:                      b.config.ctx,
 		},
 		&awscommon.StepGetPassword{
 			Debug:   b.config.PackerDebug,
@@ -265,10 +275,12 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			ProductCodes:   b.config.AMIProductCodes,
 			SnapshotUsers:  b.config.SnapshotUsers,
 			SnapshotGroups: b.config.SnapshotGroups,
+			Ctx:            b.config.ctx,
 		},
 		&awscommon.StepCreateTags{
 			Tags:         b.config.AMITags,
 			SnapshotTags: b.config.SnapshotTags,
+			Ctx:          b.config.ctx,
 		},
 	}
 

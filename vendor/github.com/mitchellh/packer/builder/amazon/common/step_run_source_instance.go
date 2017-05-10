@@ -13,6 +13,7 @@ import (
 
 	"github.com/mitchellh/multistep"
 	"github.com/mitchellh/packer/packer"
+	"github.com/mitchellh/packer/template/interpolate"
 )
 
 type StepRunSourceInstance struct {
@@ -32,6 +33,7 @@ type StepRunSourceInstance struct {
 	Tags                              map[string]string
 	UserData                          string
 	UserDataFile                      string
+	Ctx                               interpolate.Context
 
 	instanceId  string
 	spotRequest *ec2.SpotInstanceRequest
@@ -39,7 +41,10 @@ type StepRunSourceInstance struct {
 
 func (s *StepRunSourceInstance) Run(state multistep.StateBag) multistep.StepAction {
 	ec2conn := state.Get("ec2").(*ec2.EC2)
-	keyName := state.Get("keyPair").(string)
+	var keyName string
+	if name, ok := state.GetOk("keyPair"); ok {
+		keyName = name.(string)
+	}
 	securityGroupIds := aws.StringSlice(state.Get("securityGroupIds").([]string))
 	ui := state.Get("ui").(packer.Ui)
 
@@ -275,7 +280,16 @@ func (s *StepRunSourceInstance) Run(state multistep.StateBag) multistep.StepActi
 	if _, exists := s.Tags["Name"]; !exists {
 		s.Tags["Name"] = "Packer Builder"
 	}
-	ec2Tags := ConvertToEC2Tags(s.Tags)
+
+	ec2Tags, err := ConvertToEC2Tags(s.Tags, *ec2conn.Config.Region, s.SourceAMI, s.Ctx)
+	if err != nil {
+		err := fmt.Errorf("Error tagging source instance: %s", err)
+		state.Put("error", err)
+		ui.Error(err.Error())
+		return multistep.ActionHalt
+	}
+
+	ReportTags(ui, ec2Tags)
 
 	_, err = ec2conn.CreateTags(&ec2.CreateTagsInput{
 		Tags:      ec2Tags,
@@ -328,7 +342,10 @@ func (s *StepRunSourceInstance) Cleanup(state multistep.StateBag) {
 			Target:  "cancelled",
 		}
 
-		WaitForState(&stateChange)
+		_, err := WaitForState(&stateChange)
+		if err != nil {
+			ui.Error(err.Error())
+		}
 
 	}
 
@@ -345,6 +362,9 @@ func (s *StepRunSourceInstance) Cleanup(state multistep.StateBag) {
 			Target:  "terminated",
 		}
 
-		WaitForState(&stateChange)
+		_, err := WaitForState(&stateChange)
+		if err != nil {
+			ui.Error(err.Error())
+		}
 	}
 }

@@ -14,7 +14,7 @@
 [report-badge]: https://goreportcard.com/badge/github.com/mitchellh/packer
 [report]: https://goreportcard.com/report/github.com/mitchellh/packer
 
-* Website: http://www.packer.io
+* Website: https://www.packer.io
 * IRC: `#packer-tool` on Freenode
 * Mailing list: [Google Groups](http://groups.google.com/group/packer-tool)
 
@@ -27,14 +27,19 @@ comes out of the box with support for the following platforms:
 
 * Amazon EC2 (AMI). Both EBS-backed and instance-store AMIs
 * Azure
+* CloudStack
 * DigitalOcean
 * Docker
 * Google Compute Engine
+* Hyper-V
+* 1&1
 * OpenStack
 * Parallels
+* ProfitBricks
 * QEMU. Both KVM and Xen images.
-* VirtualBox
+* Triton (Joyent Public Cloud)
 * VMware
+* VirtualBox
 
 Support for other platforms can be added via plugins.
 
@@ -73,8 +78,8 @@ file as `quick-start.json`. Export your AWS credentials as the
     "access_key": "{{user `access_key`}}",
     "secret_key": "{{user `secret_key`}}",
     "region": "us-east-1",
-    "source_ami": "ami-de0d9eb7",
-    "instance_type": "t1.micro",
+    "source_ami": "ami-af22d9b9",
+    "instance_type": "t2.micro",
     "ssh_username": "ubuntu",
     "ami_name": "packer-example {{timestamp}}"
   }]

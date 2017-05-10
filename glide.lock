@@ -1,5 +1,5 @@
-hash: 509f82bea8156162edbe27b089ac930f1a6cc12e294247de750c437b34d6436f
-updated: 2017-02-15T23:34:28.589524816+01:00
+hash: 0edd2150d2ac082d38de864135eae5c363d4b6ca0213bdd40bc864c3f1f1c65d
+updated: 2017-05-10T21:08:54.84319578+02:00
 imports:
 - name: cloud.google.com/go
   version: aec0e559d3d92ccdd9729d28f44b72d083946620
@@ -185,11 +185,12 @@ imports:
 - name: github.com/mitchellh/multistep
   version: 162146fc57112954184d90266f4733e900ed05a5
 - name: github.com/mitchellh/packer
-  version: f25949eb2dd5cafb8661048ef4a97b68e7186e8b
+  version: e3d65a193e96c7b228589fc9699e39998ec12e4e
   subpackages:
   - builder/amazon/chroot
   - builder/amazon/common
   - builder/amazon/ebs
+  - builder/amazon/ebssurrogate
   - builder/amazon/ebsvolume
   - builder/amazon/instance
   - builder/azure/arm

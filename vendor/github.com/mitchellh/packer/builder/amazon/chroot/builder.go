@@ -64,6 +64,9 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		InterpolateContext: &b.config.ctx,
 		InterpolateFilter: &interpolate.RenderFilter{
 			Exclude: []string{
+				"ami_description",
+				"snapshot_tags",
+				"tags",
 				"command_wrapper",
 				"post_mount_commands",
 				"pre_mount_commands",
@@ -75,13 +78,13 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		return nil, err
 	}
 
+	if b.config.PackerConfig.PackerForce {
+		b.config.AMIForceDeregister = true
+	}
+
 	// Defaults
 	if b.config.ChrootMounts == nil {
 		b.config.ChrootMounts = make([][]string, 0)
-	}
-
-	if b.config.CopyFiles == nil {
-		b.config.CopyFiles = make([]string, 0)
 	}
 
 	if len(b.config.ChrootMounts) == 0 {
@@ -94,8 +97,12 @@ func (b *Builder) Prepare(raws ...interface{}) ([]string, error) {
 		}
 	}
 
-	if len(b.config.CopyFiles) == 0 && !b.config.FromScratch {
-		b.config.CopyFiles = []string{"/etc/resolv.conf"}
+	// set default copy file if we're not giving our own
+	if b.config.CopyFiles == nil {
+		b.config.CopyFiles = make([]string, 0)
+		if !b.config.FromScratch {
+			b.config.CopyFiles = []string{"/etc/resolv.conf"}
+		}
 	}
 
 	if b.config.CommandWrapper == "" {
@@ -251,6 +258,11 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 		&StepRegisterAMI{
 			RootVolumeSize: b.config.RootVolumeSize,
 		},
+		&awscommon.StepCreateEncryptedAMICopy{
+			KeyID:             b.config.AMIKmsKeyId,
+			EncryptBootVolume: b.config.AMIEncryptBootVolume,
+			Name:              b.config.AMIName,
+		},
 		&awscommon.StepAMIRegionCopy{
 			AccessConfig: &b.config.AccessConfig,
 			Regions:      b.config.AMIRegions,
@@ -263,10 +275,12 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			ProductCodes:   b.config.AMIProductCodes,
 			SnapshotUsers:  b.config.SnapshotUsers,
 			SnapshotGroups: b.config.SnapshotGroups,
+			Ctx:            b.config.ctx,
 		},
 		&awscommon.StepCreateTags{
 			Tags:         b.config.AMITags,
 			SnapshotTags: b.config.SnapshotTags,
+			Ctx:          b.config.ctx,
 		},
 	)
 

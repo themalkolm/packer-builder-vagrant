@@ -150,11 +150,7 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 		}
 	}
 
-	if errs != nil {
-		return errs
-	}
-
-	return nil
+	return errs
 }
 
 // This function takes the inline scripts, concatenates them
@@ -207,10 +203,7 @@ func (p *Provisioner) Provision(ui packer.Ui, comm packer.Communicator) error {
 		defer f.Close()
 
 		// Create environment variables to set before executing the command
-		flattendVars, err := p.createFlattenedEnvVars()
-		if err != nil {
-			return err
-		}
+		flattendVars := p.createFlattenedEnvVars()
 
 		// Compile the command
 		p.config.ctx.Data = &ExecuteCommandTemplate{
@@ -273,7 +266,7 @@ func (p *Provisioner) retryable(f func() error) error {
 
 		// Create an error and log it
 		err = fmt.Errorf("Retryable error: %s", err)
-		log.Printf(err.Error())
+		log.Print(err.Error())
 
 		// Check if we timed out, otherwise we retry. It is safe to
 		// retry since the only error case above is if the command
@@ -287,7 +280,7 @@ func (p *Provisioner) retryable(f func() error) error {
 	}
 }
 
-func (p *Provisioner) createFlattenedEnvVars() (flattened string, err error) {
+func (p *Provisioner) createFlattenedEnvVars() (flattened string) {
 	flattened = ""
 	envVars := make(map[string]string)
 
@@ -302,10 +295,6 @@ func (p *Provisioner) createFlattenedEnvVars() (flattened string, err error) {
 	// Split vars into key/value components
 	for _, envVar := range p.config.Vars {
 		keyValue := strings.SplitN(envVar, "=", 2)
-		if len(keyValue) != 2 || keyValue[0] == "" {
-			err = errors.New(fmt.Sprintf("Shell provisioner environment variables must be in key=value format. Currently it is '%s'", envVar))
-			return
-		}
 		envVars[keyValue[0]] = keyValue[1]
 	}
 	// Create a list of env var keys in sorted order

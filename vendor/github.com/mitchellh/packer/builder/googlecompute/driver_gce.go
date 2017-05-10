@@ -386,11 +386,12 @@ func (d *driverGCE) RunInstance(c *InstanceConfig) (<-chan error, error) {
 			},
 		},
 		Scheduling: &compute.Scheduling{
-			Preemptible: c.Preemptible,
+			OnHostMaintenance: c.OnHostMaintenance,
+			Preemptible:       c.Preemptible,
 		},
 		ServiceAccounts: []*compute.ServiceAccount{
 			{
-				Email:  c.ServiceAccountEmail,
+				Email:  "default",
 				Scopes: c.Scopes,
 			},
 		},
