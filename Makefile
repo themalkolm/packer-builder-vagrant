@@ -1,7 +1,7 @@
 OS             ?= $(shell go env GOOS)
 ARCH           ?= $(shell go env GOARCH)
 
-VERSION        ?= 10.05.2017
+VERSION        ?= 2017.05.10
 GOPKG          ?= github.com/themalkolm/packer-builder-vagrant
 PACKER_VERSION ?= 1.0.0
 
