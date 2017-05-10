@@ -49,6 +49,7 @@ packer build \
     -var "box_name=${BOX_NAME}" \
     -var "box_version=${BOX_VERSION}" \
     -var "box_file=${BOX_FILE}" \
+    -var "vm_cpus=1" \
     template.json
 vagrant box add --force --name ${BOX_NAME_42} ${BOX_FILE}
 

@@ -21,6 +21,9 @@
         "ssh_password": "vagrant",
         "ssh_pty": true,
         "ssh_private_key_file": "key/vagrant",
+        "vboxmanage": [
+          [ "modifyvm", "{{.Name}}", "--cpus", "{{user `vm_cpus`}}" ]
+        ],
         "shutdown_command": "echo '/sbin/halt -h -p' > /tmp/shutdown.sh; echo 'vagrant'|sudo -S sh '/tmp/shutdown.sh'"
       }
     }
