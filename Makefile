@@ -24,7 +24,7 @@ build/$(BINARY):
 	    -o $@ $(GOPKG)
 
 .PHONY: build
-build: build/$(BINARY)
+build: vendor/ build/$(BINARY)
 
 .PHONY: dist
 dist:
@@ -34,4 +34,15 @@ dist:
 
 .PHONY: clean
 clean:
-	rm -rf build dist
+	rm -rf build dist vendor/
+
+vendor/:
+	git clone -b v$(PACKER_VERSION) --single-branch --depth 1 https://github.com/mitchellh/packer.git $(CURDIR)/vendor/github.com/mitchellh/packer
+	rsync -avz $(CURDIR)/vendor/github.com/mitchellh/packer/vendor/ $(CURDIR)/vendor/
+	rm     -rf $(CURDIR)/vendor/github.com/mitchellh/packer/vendor/
+	git clone -b v3.3.0 --single-branch --depth 1 https://github.com/blang/semver.git     $(CURDIR)/vendor/github.com/blang/semver
+	git clone           --single-branch --depth 1 https://github.com/koding/vagrantutil   $(CURDIR)/vendor/github.com/koding/vagrantutil && \
+	    cd $(CURDIR)/vendor/github.com/koding/vagrantutil && git checkout b2ce682200600ff2000bea1013ba7b965e851f87
+	git clone           --single-branch           https://github.com/koding/logging.git $(CURDIR)/vendor/github.com/koding/logging && \
+		cd $(CURDIR)/vendor/github.com/koding/logging && git checkout 8b5a689ed69b1c7cd1e3595276fc2a352d7818e0
+	find $(CURDIR)/vendor -name .git | xargs rm -rf
