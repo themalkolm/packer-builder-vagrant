@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/common"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/common"
+	"github.com/hashicorp/packer/packer"
 )
 
 type Builder struct {

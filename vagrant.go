@@ -12,7 +12,7 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/koding/vagrantutil"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/packer"
 )
 
 const (

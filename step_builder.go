@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/mitchellh/multistep"
-	"github.com/mitchellh/packer/command"
-	"github.com/mitchellh/packer/packer"
+	"github.com/hashicorp/packer/command"
+	"github.com/hashicorp/packer/packer"
 )
 
 type StepBuilder struct {
