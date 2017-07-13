@@ -4,11 +4,3 @@ import:
   version: 3.3.0
 - package: github.com/koding/vagrantutil
   version: b2ce682200600ff2000bea1013ba7b965e851f87
-- package: github.com/mitchellh/packer
-  version: 1.0.0
-  subpackages:
-  - command
-  - helper/config
-  - packer
-  - packer/plugin
-  - template/interpolate
