@@ -40,7 +40,7 @@ vendor/:
 	mkdir -p $(CURDIR)/vendor/github.com/hashicorp
 	ln -s    $(CURDIR)/vendor/github.com/hashicorp $(CURDIR)/vendor/github.com/mitchellh
 	git clone -b v$(PACKER_VERSION) --single-branch --depth 1 https://github.com/hashicorp/packer.git $(CURDIR)/vendor/github.com/hashicorp/packer
-	rsync -avz $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/ $(CURDIR)/vendor/
+	rsync -azK $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/ $(CURDIR)/vendor/
 	rm     -rf $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/
 	git clone -b v3.3.0 --single-branch --depth 1 https://github.com/blang/semver.git     $(CURDIR)/vendor/github.com/blang/semver
 	git clone           --single-branch --depth 1 https://github.com/koding/vagrantutil   $(CURDIR)/vendor/github.com/koding/vagrantutil && \
