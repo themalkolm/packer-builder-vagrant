@@ -60,7 +60,7 @@ You can convert your existing configuraiton in the following way to enable autom
   "builders": [
     {
       "type": "virtualbox-ovf",
-      "source_path": "/home/john.doe/.vagrant.d/boxes/bento-VAGRANTSLASH-centos-7.2/2.3.1/virtualbox/box.ovf",
+      "source_path": "/home/john.doe/.vagrant.d/boxes/bento-VAGRANTSLASH-centos-7.3/2.3.5/virtualbox/box.ovf",
       "guest_additions_mode": "disable",
       "headless": true,
       "ssh_username": "vagrant",
@@ -82,7 +82,7 @@ Wrap `virtualbox-ovf` in `vagrant` builder the following way:
     {
       "type": "vagrant",
 
-      "box_name": "bento/centos-7.2",
+      "box_name": "bento/centos-7.3",
       "box_provider": "virtualbox",
       "box_file": ".ovf",
 
