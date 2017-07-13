@@ -37,9 +37,11 @@ clean:
 	rm -rf build dist vendor/
 
 vendor/:
-	git clone -b v$(PACKER_VERSION) --single-branch --depth 1 https://github.com/mitchellh/packer.git $(CURDIR)/vendor/github.com/mitchellh/packer
-	rsync -avz $(CURDIR)/vendor/github.com/mitchellh/packer/vendor/ $(CURDIR)/vendor/
-	rm     -rf $(CURDIR)/vendor/github.com/mitchellh/packer/vendor/
+	mkdir -p $(CURDIR)/vendor/github.com/hashicorp
+	ln -s    $(CURDIR)/vendor/github.com/hashicorp $(CURDIR)/vendor/github.com/mitchellh
+	git clone -b v$(PACKER_VERSION) --single-branch --depth 1 https://github.com/hashicorp/packer.git $(CURDIR)/vendor/github.com/hashicorp/packer
+	rsync -avz $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/ $(CURDIR)/vendor/
+	rm     -rf $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/
 	git clone -b v3.3.0 --single-branch --depth 1 https://github.com/blang/semver.git     $(CURDIR)/vendor/github.com/blang/semver
 	git clone           --single-branch --depth 1 https://github.com/koding/vagrantutil   $(CURDIR)/vendor/github.com/koding/vagrantutil && \
 	    cd $(CURDIR)/vendor/github.com/koding/vagrantutil && git checkout b2ce682200600ff2000bea1013ba7b965e851f87
