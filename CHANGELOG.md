@@ -1,3 +1,9 @@
+## 2017.07.14
+
+* Migrated to packer 1.0.2
+* Migrated mitchellh/packer -> hashicorp/packer
+* Copying packer code as is, removed glide
+
 ## 2017.05.10-1
 
 * Do not render builder's config (issues/#5)
