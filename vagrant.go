@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	"github.com/blang/semver"
-	"github.com/koding/vagrantutil"
 	"github.com/hashicorp/packer/packer"
+	"github.com/koding/vagrantutil"
 )
 
 const (

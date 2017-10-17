@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/mitchellh/multistep"
 	"github.com/hashicorp/packer/packer"
+	"github.com/mitchellh/multistep"
 )
 
 type StepFetchBox struct {
