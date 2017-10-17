@@ -1,3 +1,8 @@
+## 2017.10.17
+
+* Migrated to golang 1.9
+* Migrated to packer 1.0.4
+
 ## 2017.07.14
 
 * Migrated to packer 1.0.2
