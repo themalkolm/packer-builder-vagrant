@@ -1,5 +1,6 @@
 ## 2018.03.01
 
+* Migrated to golang 1.10
 * Migrated to packer 1.2.0
 
 ## 2018.01.31
