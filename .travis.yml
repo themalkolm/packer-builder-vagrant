@@ -1,7 +1,7 @@
 sudo: false
 language: go
 go:
-  - 1.10
+  - 1.9
 script:
   - ln -s ${TRAVIS_BUILD_DIR} ${GOPATH}/src/github.com/${TRAVIS_REPO_SLUG}
   - make dist
