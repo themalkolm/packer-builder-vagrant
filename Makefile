@@ -1,9 +1,9 @@
 OS             ?= $(shell go env GOOS)
 ARCH           ?= $(shell go env GOARCH)
 
-VERSION        ?= 2018.01.31
+VERSION        ?= 2018.03.01
 GOPKG          ?= github.com/themalkolm/packer-builder-vagrant
-PACKER_VERSION ?= 1.1.3
+PACKER_VERSION ?= 1.2.0
 
 BINARY         ?= packer-$(PACKER_VERSION)_packer-builder-vagrant_$(OS)_$(ARCH)
 ifeq ($(OS),windows)
