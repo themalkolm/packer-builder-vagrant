@@ -15,7 +15,7 @@ type StepBuilder struct {
 	builder       packer.Builder
 }
 
-func (s *StepBuilder) Run(cxt context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepBuilder) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
 	err := s.doRun(state)

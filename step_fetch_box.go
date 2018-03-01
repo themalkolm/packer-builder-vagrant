@@ -18,7 +18,7 @@ type StepFetchBox struct {
 	BuilderConfig map[string]interface{}
 }
 
-func (s *StepFetchBox) Run(cxt context.Context, state multistep.StateBag) multistep.StepAction {
+func (s *StepFetchBox) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
 	err := s.doRun(state)
