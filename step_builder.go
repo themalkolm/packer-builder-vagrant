@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	"context"
 
 	"github.com/hashicorp/packer/command"
 	"github.com/hashicorp/packer/packer"
-	"github.com/mitchellh/multistep"
+	"github.com/hashicorp/packer/helper/multistep"
 )
 
 type StepBuilder struct {
@@ -14,7 +15,7 @@ type StepBuilder struct {
 	builder       packer.Builder
 }
 
-func (s *StepBuilder) Run(state multistep.StateBag) multistep.StepAction {
+func (s *StepBuilder) Run(cxt context.Context, state multistep.StateBag) multistep.StepAction {
 	ui := state.Get("ui").(packer.Ui)
 
 	err := s.doRun(state)
