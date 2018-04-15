@@ -10,7 +10,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/blang/semver"
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/packer/packer"
 	"github.com/koding/vagrantutil"
 )
@@ -37,22 +37,17 @@ func NewVagrant(ui packer.Ui) (*Vagrant, error) {
 
 type boxSorter struct {
 	boxes    []*vagrantutil.Box
-	versions []*semver.Version
+	versions []*version.Version
 }
 
 func newBoxSorter(boxes []*vagrantutil.Box) (*boxSorter, error) {
-	versions := make([]*semver.Version, len(boxes))
+	versions := make([]*version.Version, len(boxes))
 	for i, b := range boxes {
-		version := b.Version
-		if b.Version == defaultVersion {
-			version = semver.Version{}.String() // 0.0.0
-		}
-
-		v, err := semver.ParseTolerant(version)
+		v, err := version.NewVersion(b.Version)
 		if err != nil {
 			return nil, err
 		}
-		versions[i] = &v
+		versions[i] = v
 	}
 	return &boxSorter{
 		boxes:    boxes,
@@ -70,7 +65,7 @@ func (s *boxSorter) Swap(i, j int) {
 }
 
 func (s *boxSorter) Less(i, j int) bool {
-	return (*s.versions[i]).LT(*s.versions[j])
+	return (s.versions[i]).LessThan(s.versions[j])
 }
 
 func (v *Vagrant) fetchBoxFile(url, name, version, provider, pattern string) (string, error) {
