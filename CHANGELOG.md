@@ -1,3 +1,8 @@
+## 2018.04.15
+
+* Migrated to packer 1.2.2
+* Migrated from semver to hashicorp/go-version (issue #11)
+
 ## 2018.03.01
 
 * Migrated to golang 1.10
