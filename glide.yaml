@@ -1,6 +1,0 @@
-package: github.com/themalkolm/packer-builder-vagrant
-import:
-- package: github.com/blang/semver
-  version: 3.3.0
-- package: github.com/koding/vagrantutil
-  version: b2ce682200600ff2000bea1013ba7b965e851f87
