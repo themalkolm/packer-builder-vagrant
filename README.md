@@ -1,6 +1,6 @@
 # packer-builder-vagrant [![Build Status](https://travis-ci.org/themalkolm/packer-builder-vagrant.svg?branch=master)](https://travis-ci.org/themalkolm/packer-builder-vagrant) [![Go Report Card](https://goreportcard.com/badge/github.com/themalkolm/packer-builder-vagrant)](https://goreportcard.com/report/github.com/themalkolm/packer-builder-vagrant)
 
-Proxy builder. It fetches vagrant box (if it is not yet fetched) and forwards the actual building the to
+Proxy builder. It fetches vagrant box (if it is not yet fetched) and forwards the actual building to the
 corresponding builder.
 
 **WARNING** It essentially compiles in the **whole** packer to allow us to configure any
@@ -27,7 +27,7 @@ This is not convenient if you think about it. Won't it be nice for packer to aut
 provision it and build a new version right away?
 
 `packer-builder-vagrant` does exactly that. It works as a proxy and finds existing vagrant boxes before starting the
-underlying actuall builder with the updated configuration.
+underlying actual builder with the updated configuration.
 
 Installation
 ------------
@@ -53,7 +53,7 @@ See [docs](https://www.packer.io/docs/extend/plugins.html) for more info.
 Usage
 -----
 
-You can convert your existing configuraiton in the following way to enable automatic vagrant boxes discovery:
+You can convert your existing configuration in the following way to enable automatic vagrant boxes discovery:
 
 ```json
 {
@@ -129,7 +129,7 @@ Provider to find box for e.g.:
 
 ### box_file
 
-Box file to look for in the box directory. This file will provided in `source_path` to the underlying builder. Different boxes have different file names so it is a *regexp pattern* that must mach **only one** file in the directory.
+Box file to look for in the box directory. This file will provided in `source_path` to the underlying builder. Different boxes have different file names so it is a *regexp pattern* that must match **only one** file in the directory.
 
 ### builder
 
