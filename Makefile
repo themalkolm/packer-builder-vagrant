@@ -43,7 +43,7 @@ vendor/:
 	rsync -azK $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/ $(CURDIR)/vendor/
 	rm     -rf $(CURDIR)/vendor/github.com/hashicorp/packer/vendor/
 	git clone           --single-branch --depth 1 https://github.com/koding/vagrantutil   $(CURDIR)/vendor/github.com/koding/vagrantutil && \
-	    cd $(CURDIR)/vendor/github.com/koding/vagrantutil && git checkout b2ce682200600ff2000bea1013ba7b965e851f87
+	    cd $(CURDIR)/vendor/github.com/koding/vagrantutil && git checkout 70827343f1169931bbe84e8051fcbcf06da90eb7
 	git clone           --single-branch           https://github.com/koding/logging.git $(CURDIR)/vendor/github.com/koding/logging && \
 		cd $(CURDIR)/vendor/github.com/koding/logging && git checkout 8b5a689ed69b1c7cd1e3595276fc2a352d7818e0
 	find $(CURDIR)/vendor -name .git | xargs rm -rf
