@@ -1,3 +1,7 @@
+## 2018.10.15
+
+* Migrated to packer 1.2.5
+
 ## 2018.04.15
 
 * Migrated to packer 1.2.2
